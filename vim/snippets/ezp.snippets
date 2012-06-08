@@ -1,0 +1,25 @@
+snippet content_list "fetch content list" w
+fetch( 'content', 'list', hash( 'parent_node_id', ${1:node.node_id},
+                                'sort_by', ${2:node.sort_array},
+                                'offset', '$3',
+                                'limit', '$4',
+                                'attribute_filter', array( $5, $6, $7 ),
+                                'extended_attribute_filter', hash( 'id', '$8',
+                                                                   'params', hash( $9 )
+                                                                    ),
+                                'class_filter_type', '${10:include}',
+                                'class_filter_array', array( ${11} ),
+                                'only_translated', ${12:false()},
+                                'language', '${13}',
+                                'main_node_only', ${14:false()},
+                                'as_object', ${15:false()},
+                                'depth', '${16}',
+                                'limitation', array( ${17} ),
+                                'ignore_visibility', ${18:false()},
+                                'load_data_map', ${19:false()} ) )
+endsnippet
+snippet if "if block"
+{if $1}
+    $0
+{/if}
+endsnippet

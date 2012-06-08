@@ -1,0 +1,55 @@
+check_git() {
+	local base_dir sub_dir branch
+
+	if type -p __git_ps1; then
+		branch=$(__git_ps1)
+	fi
+    test=`pwd | grep -F "mnt"`
+	if [ "$test" == "" ] && [ $branch ]; then
+
+		#base_dir
+		base_dir=$(git rev-parse --show-cdup 2>/dev/null) || return 1
+		if [ -n "$base_dir" ]; then 
+			base_dir=`cd $base_dir; pwd`
+		else 
+			base_dir=$PWD 
+		fi
+
+		#sub_dir
+		sub_dir=$(git rev-parse --show-prefix)
+		sub_dir="/${sub_dir%/}"
+
+		#status, return status
+		get_status(){
+			local status status_text added deleted modified untracked
+			status=$(git status --porcelain 2>/dev/null)
+			status_text=""
+
+			added=$(echo "$status" | grep '^A' -s | wc -l)
+			deleted=$(echo "$status" | grep '^A' -s | wc -l)
+			modified=$((`echo "$status" | grep '^M' -s | wc -l` - ${deleted} ))
+			untracked=$(echo "$status" | grep '^??' -s | wc -l)
+
+			if [ $added != 0 ]; then status_text="${status_text}${txtgrn}A:${added}${normal}"; fi;
+			if [ $deleted != 0 ]; then status_text="${status_text}${txtred} D:${deleted}${normal}"; fi;
+			if [ $modified != 0 ]; then status_text="${status_text}${txtcyn} M:${modified}${normal}"; fi;
+			if [ $untracked != 0 ]; then status_text="${status_text}${txtblu} ?:${untracked}${normal}"; fi;
+			if [ -n "$status_text" ]; then echo -e "(${status_text})"; fi
+		}
+
+		base_dir="$(basename "${base_dir}")"
+		branch=" ${branch/ /} "
+
+		# echo -e "${bold}${base_dir}${normal}${branch}${bold}${sub_dir}${normal}>$(get_status)"
+		echo -e "${bold}${base_dir}${normal}${branch}${bold}${sub_dir}${normal}>"
+
+	else
+		echo -e "${bold}`pwd`${normal}"	
+	fi
+
+}
+
+# :file[(repository)]/path/continues> (I: W: ?: )
+# [uhr] user:folder (repository)>
+# $ 
+export PS1='\[\033[01;32m\]\u\[\033[00m\]:$(check_git)\n[ \A ] > '

@@ -1,0 +1,116 @@
+
+# export HOSTFILE=$HOME/.hosts
+
+# Skip all this for non-interactive shells
+[[ -z "$PS1" ]] && return
+
+# MacPorts Installer addition on 2011-12-05_at_16:52:08: adding an appropriate PATH variable for use with MacPorts.
+# now use only brew
+# export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+# Finished adapting your PATH environment variable for use with MacPorts.
+
+# add android tools and mysqlbin to path
+export PATH=/usr/local/bin:/Users/juan-pablostumpf/.android/tools:/usr/local/mysql/bin:/usr/local/git/bin:$HOME/.rvm/bin:/usr/local/share/python:$PATH
+
+# don't save duplicates in history
+export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTSIZE=9000
+export HISTFILESIZE=9000
+shopt -s histappend                      # append to history, don't overwrite it
+
+# Save and reload the history after each command finishes
+# this allows to share bash story amongst all the instances
+# dont work yet: http://stackoverflow.com/questions/103944/real-time-history-export-amongst-bash-terminal-windows/3055135
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+
+EDITOR=vim
+VISUAL=vim
+PAGGER='less -i'
+
+# set -o vi
+shopt -s extglob   # extended pattern matching features
+shopt -s cdspell   # correct dir spelling errors on cd
+shopt -s lithist   # save multi-line commands with newlines
+# shopt -s autocd    # if a command is a dir name, cd to it
+# shopt -s dirspell  # correct dir spelling errors on completion
+# shopt -s globstar  # ** matches all files, dirs and subdirs
+shopt -s cmdhist   # save multi-line commands in a single hist entry
+shopt -s checkwinsize # check the window size after each command
+shopt -s no_empty_cmd_completion # don't try to complete empty cmds
+
+#coloured man pages
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+export LESSOPEN="|$HOME/.bash/scripts/lesspipe.sh %s"
+export LESS=' -R '
+
+# colors for git status (see .bash_prompt)
+txtgrn='\033[0;32m' # Green
+txtred='\033[0;31m' # Red
+txtcyn='\033[0;36m' # Cyan
+txtblu='\033[0;34m' # Blue
+# new set of colors
+COLOR_NC='\033[0m'
+COLOR_BLACK='\033[1;37m'
+COLOR_LIGHT_BLUE='\033[0;34m'
+COLOR_LIGHT_GREEN='\033[0;32m'
+COLOR_LIGHT_CYAN='\033[0;36m'
+COLOR_LIGHT_RED='\033[0;31m'
+COLOR_LIGHT_PURPLE='\033[0;35m'
+COLOR_LIGHT_YELLOW='\033[0;33m'
+COLOR_LIGHT_GRAY='\033[1;30m'
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+#grep colors
+export GREP_COLOR="1;31"
+export GREP_OPTIONS='--color=auto'
+export GRC_HOME=~/.grc
+
+# ignore backups, CVS directories, python bytecode, vim swap files
+FIGNORE="~:CVS:#:.pyc:.swp:.swa:apache-solr-*"
+
+# load autocomplete, if exists
+homebrew=$(brew --prefix)
+if [ -f $homebrew/etc/bash_completion ]; then
+    . $homebrew/etc/bash_completion
+fi
+
+for file in $(find $homebrew/etc/bash_completion.d -not -type d)
+do
+  source $file 2>/dev/null
+done
+
+# git autocomplete for mac
+source ~/.bash/scripts/git.completion.sh
+source ~/.bash/scripts/ssh.completion.sh
+
+. ~/.bash/.bash_prompt
+. ~/.bash/.bash_dyncompletion
+. ~/.bash/.bash_aliases
+. ~/.bash/.bash_functions
+. ~/.bash/.bash_inputrc
+
+# add ezp
+#source ~/.ezp/ezp.sh
+#export PATH=$HOME/.ezp:$PATH
+
+# Export INPUTRC=~/.bash/.bash_inputrc
+
+# trap commands and echo them to xterm titlebar. Must be last line.
+trap 'echo -ne "\033];$USER@${HOSTNAME}>$(pwd)\007"' DEBUG
+
+
+## START-BCVI
+  echo $PATH | grep -q /Users/juanolon/bin || PATH="/Users/juanolon/bin/$PATH"
+  test -n "$(which bcvi)" && eval "$(bcvi --unpack-term)"
+  test -n "${BCVI_CONF}"  && alias vi="bcvi"
+  test -n "${BCVI_CONF}"  && alias suvi="EDITOR='bcvi -c viwait' sudoedit"
+  test -n "${BCVI_CONF}"  && alias bcp="bcvi -c scpd"
+## END-BCVI
+

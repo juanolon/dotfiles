@@ -1,0 +1,21 @@
+[user]
+	name = Juan Pablo
+	email = juanolon@gmail.com
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+[help]
+	autocorrect = 1
+[core]
+	editor = vim
+	autocrlf = input
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+[merge]
+tool = threesome
+
+[mergetool "threesome"]
+cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
+trustExitCode = true
