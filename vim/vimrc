@@ -15,7 +15,7 @@ set noexrc
 filetype off
 
 " initialize vundle
-set rtp+=~/.vim/bundle/vundle/
+set rtp+=~/dotfiles/vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
