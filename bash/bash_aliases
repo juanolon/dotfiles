@@ -34,6 +34,6 @@ alias push='git push'
 alias pull='git pull'
 
 # better navigation
-alias d='dirs -v'
-alias p='popd'
-alias cd='pushd'
+# alias d='dirs -v'
+# alias p='popd'
+# alias cd='pushd'

@@ -4,11 +4,6 @@
 # Skip all this for non-interactive shells
 [[ -z "$PS1" ]] && return
 
-# MacPorts Installer addition on 2011-12-05_at_16:52:08: adding an appropriate PATH variable for use with MacPorts.
-# now use only brew
-# export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-# Finished adapting your PATH environment variable for use with MacPorts.
-
 # add android tools and mysqlbin to path
 export PATH=/usr/local/bin:/Users/juan-pablostumpf/.android/tools:/usr/local/mysql/bin:/usr/local/git/bin:$HOME/.rvm/bin:/usr/local/share/python:$PATH
 
