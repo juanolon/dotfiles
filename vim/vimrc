@@ -42,7 +42,11 @@ Bundle 'sickill/vim-pasta'
 Bundle 'jelera/vim-powerline'
 Bundle 'tpope/vim-surround'
 Bundle 'int3/vim-taglist-plus'
+Bundle 'mileszs/ack.vim'
+Bundle 'sjl/gundo.vim'
+Bundle 'jeffkreeftmeijer/vim-numbertoggle'
 
+Bundle 'bclose'
 Bundle 'ezvimr'
 Bundle 'ir_black'
 Bundle 'wombat'
@@ -52,6 +56,7 @@ Bundle 'wombat'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 filetype plugin indent on "load filetype plugins/indent settings
 syntax on "enable syntax highlight
+set shell=/bin/bash "set bash as default shell
 set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
 "set clipboard+=unnamedplus
@@ -174,7 +179,8 @@ set showmode "show the current mode
 
 set showcmd "show partial commands?
 set magic "for regular expressions?
-set guifont=Mensch\ Regular\ for\ Powerline:h11
+" set guifont=Mensch\ Regular\ for\ Powerline:h11
+set guifont=Inconsolata-dz\ for\ Powerline:h11
 
 "set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
 
@@ -218,6 +224,9 @@ let g:Powerline_symbols = 'fancy'
 " let g:tabman_number = 1 " shows column number
 
 " vim-notes
+if ! isdirectory(expand('~/notes'))
+  call mkdir(expand('~/notes'))
+endif
 let g:notes_directory = '~/notes'
 let g:notes_title_sync = 'change_title' " if file name or first line is changed, this update the first line
 
@@ -233,7 +242,7 @@ let g:miniBufExplTabWrap = 1 " make tabs show complete (no broken on two lines)
 autocmd BufRead,BufNew :call UMiniBufExplorer "update explorer without navigating
 
 " CtrlP
-let g:ctrlp_working_path_mode = 2 "set working directory of CtrlP to the nearest 'repository'
+let g:ctrlp_working_path_mode = 0 "don't change working directory..
 let g:ctrlp_match_window_reversed = 0 " listing order from top to bottom
 let g:ctrlp_clear_cache_on_exit = 0 " cross session caching
 let g:ctrlp_cache_dir = $HOME.'/.vimtmp/ctrlp'
@@ -301,6 +310,9 @@ let g:UltiSnipsSnippetDirectories = ["snippets"]
 autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
 autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+
+"ACK
+nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -418,7 +430,8 @@ func! s:etwd()
     exe 'lc!' fnameescape(wd == '' ? cph : substitute(wd, mkr.'$', '.', ''))
 endfunc
 
-au BufEnter * cal s:etwd()
+au BufEnter * if &ft !=# 'notes' | cal s:etwd() | endif " but don't change working directory, if opening notes
+" au BufEnter * cal s:etwd()
 
 " Set status line
 "set statusline=[%02n]\ %f\ %(\[%M%R%H]%)%=\ %4l,%02c%2V\ %P%*

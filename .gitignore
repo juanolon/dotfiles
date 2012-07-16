@@ -1,6 +1,10 @@
-.DS_Store
-.netrwhist
+*.DS_Store
+*.netrwhist
 *.swp
 *.swo
 vim/bundle
 !vim/bundle/vundle/
+!vim/bundle/ezvimr/
+!vim/bundle/ir_black/
+!vim/bundle/wombat/
+!vim/bundle/bclose/
