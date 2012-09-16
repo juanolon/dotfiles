@@ -45,6 +45,7 @@ Bundle 'int3/vim-taglist-plus'
 Bundle 'mileszs/ack.vim'
 Bundle 'sjl/gundo.vim'
 Bundle 'jeffkreeftmeijer/vim-numbertoggle'
+Bundle 'tomtom/tcomment_vim'
 
 Bundle 'bclose'
 Bundle 'ezvimr'
@@ -60,7 +61,9 @@ set shell=/bin/bash "set bash as default shell
 set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
 "set clipboard+=unnamedplus
-set clipboard=unnamed
+if $TMUX == ''
+    set clipboard=unnamed
+endif
 set fileformats=unix,dos,mac
 set noerrorbells
 " set nohidden
@@ -77,6 +80,9 @@ let g:mapleader = "-"
 let maplocalleader = "_"
 let g:maplocalleader = "_"
 
+if ! isdirectory(expand('~/.vimbackup'))
+  call mkdir(expand('~/.vimbackup'))
+endif
 if ! isdirectory(expand('~/.vimtmp'))
   call mkdir(expand('~/.vimtmp'))
 endif
@@ -107,6 +113,11 @@ aug END
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 let mapleader = ","
+
+set timeoutlen=500
+if !has( "gui_running" )
+    set term=screen-256color
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UI
@@ -168,8 +179,9 @@ set number
 
 set ignorecase "set ignorecase on
 set smartcase
-set nobackup "do not keep a backup files
-set nowritebackup
+set backup
+set backupdir=~/.vimbackup
+set backupext=.vimbackup
 set ruler "show the cursor position all the time
 
 set scrolljump=5 "lines to scroll when cursor leaves screen
@@ -271,6 +283,8 @@ let my_ctrlp_git_command = "" .
 
 let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
 
+nnoremap <C-b> :CtrlPBuffer<CR> 
+
 " SuperTab
 let g:SuperTabLongestEnhanced = 1
 set completeopt=menuone,longest
@@ -312,8 +326,10 @@ autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
 "ACK
-nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
+" nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 
+" if performance down
+" let loaded_matchparen = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Maps
@@ -323,6 +339,7 @@ inoremap jj <Esc>
 
 " Save with sudo.
 cnoremap w!! %!sudo tee > /dev/null %
+cnoremap W w
 
 noremap k gk
 noremap j gj
@@ -342,8 +359,10 @@ map K i<CR><Esc>g;
 noremap <F11> :set list!<CR>
 
 " navigate through buffers with tab
-noremap <C-S-tab> :bprev<CR> 
-noremap <C-tab> :bnext<CR> 
+" noremap <C-S-tab> :bprev<CR> 
+" noremap <C-tab> :bnext<CR> 
+noremap <C-S-tab> :tabp<CR> 
+noremap <C-tab> :tabn<CR> 
 
 " use sane regex
 vnoremap / /\v
@@ -365,6 +384,11 @@ vnoremap <C-l> $
 vnoremap <Space> za
 nnoremap <Space> za
 
+" Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
+nnoremap <silent> <C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
+nnoremap <silent> <C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
+nnoremap <silent> ∆ :set paste<CR>m`o<Esc>``:set nopaste<CR>
+nnoremap <silent> ˚ :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
@@ -380,8 +404,8 @@ endfunction
 set scs "smart search (override 'ic' when pattern has upper)
 set complete=.,w,b,t "set the autocomplete search list
 
-" colorscheme wombat " alternative: maloki
-colorscheme ir_black
+" colorscheme wombat " alternative: maloki, ir_black
+colorscheme wombat
 
 "set custom statusline for special windows
 "http://dev.gentoo.org/~bass/configs/vimrc.html
