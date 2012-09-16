@@ -1,7 +1,7 @@
 alias mkdir='mkdir -p'
 alias c='clear'
 
-alias ls='ls -GFh'
+alias ls='gls -GFhB --color=auto'
 alias la='ls -la'
 alias ll='ls -hl'
 
@@ -9,13 +9,10 @@ alias sshv='bcvi --wrap-ssh -- '
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
-# alias vim='mvim --remote-tab-silent'
-# alias vm='mvim --remote-tab-silent || mvim'
-# alias gvim='mvim --remote-tab-silent || mvim'
-
-alias vim='mvim --remote-silent'
-alias vm='mvim --remote-silent || mvim'
-alias gvim='mvim --remote-silent || mvim'
+alias vim='/usr/local/Cellar/macvim/7.3-64/MacVim.app/Contents/MacOS/Vim'
+if [[ -n $TMUX ]]; then
+    alias vim='tmux-vim'
+fi
 
 alias '..'='cd ..'
 alias '...'='cd ../..'
@@ -33,7 +30,4 @@ alias add='git add'
 alias push='git push'
 alias pull='git pull'
 
-# better navigation
-# alias d='dirs -v'
-# alias p='popd'
-# alias cd='pushd'
+alias tmux="TERM=xterm-256color tmux -u -2"
