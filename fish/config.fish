@@ -1,7 +1,10 @@
+# load tmuxinator
+[[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
+
 # PATH
 #########################
 if status --is-login
-	for p in /usr/local/bin /usr/local/sbin /Users/juanolon/.android/tools $HOME/.config/fish/bin $HOME/.bin $HOME/.rvm/bin
+	for p in /usr/local/bin /usr/local/sbin $HOME/.android/tools $HOME/.config/fish/bin $HOME/.bin $HOME/.rvm/bin
 		if test -d $p
 			set PATH $p $PATH
 		end
@@ -42,6 +45,11 @@ alias add 'git add'
 alias push 'git push'
 alias pull 'git pull'
 
+alias ev 'e /Users/juanolon/dotfiles/vim/vimrc'
+alias ef 'e /Users/juanolon/dotfiles/fish/config.fish'
+alias eh 'e /etc/hosts'
+
+
 # CONFIG
 #########################
 set -x EDITOR "vim"
@@ -51,9 +59,29 @@ set -gx GREP_OPTIONS --color=auto
 set -gx GREP_COLOR '0;37;43' # red bg
 set -gx LESS '-cx4MiR' # clear screen, tabstop=4, long prompt, smart ignorecase, accept colors
 set -gx CDPATH '.'
+set -g -x NODE_PATH "/usr/local/lib/node_modules"
 
 # locale settings
 set -x LC_CTYPE=en_US.UTF-8
 set -x LC_ALL=en_US.UTF-8
 set -x LANGUAGE=en_US.UTF-8
 set -x LC_ALL=en_US.UTF-8
+
+# FUNCTIONS
+#########################
+#nginx
+function ngx_start -d "start nginx"
+    sudo /usr/local/sbin/nginx
+end
+
+function ngx_stop -d "stop nginx"
+    sudo /usr/local/sbin/nginx -s stop
+end
+
+function ngx_log -d "shows nginx log file"
+    tail -f /var/log/nginx/error.log
+end
+
+function ngx_reload -d "relaod nginx"
+    sudo /usr/local/sbin/nginx -s reload
+end
