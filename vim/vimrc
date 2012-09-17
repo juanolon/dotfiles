@@ -365,16 +365,16 @@ noremap <C-S-tab> :tabp<CR>
 noremap <C-tab> :tabn<CR> 
 
 " use sane regex
-vnoremap / /\v
-vnoremap ? ?\v 
-vnoremap s/ s/\v
-vnoremap %s/ %s/\v
-nnoremap / /\v
-nnoremap ? ?\v
-nnoremap s/ s/\v
-nnoremap %s/ %s/\v
-cnoremap s/ s/\v
-cnoremap %s/ %s/\v
+" vnoremap / /\v
+" vnoremap ? ?\v 
+" vnoremap s/ s/\v
+" vnoremap %s/ %s/\v
+" nnoremap / /\v
+" nnoremap ? ?\v
+" nnoremap s/ s/\v
+" nnoremap %s/ %s/\v
+" cnoremap s/ s/\v
+" cnoremap %s/ %s/\v
 
 " start/end of line
 vnoremap <C-h> ^
