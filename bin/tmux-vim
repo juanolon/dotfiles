@@ -361,11 +361,11 @@ tmux_vim() {
         # Errant escape keys cause the whole open to just silently fail.
         # This approach pushes the user interaction right to the end.
         while [[ $# -gt 1 ]]; do
-            _vim_op badd "$1"
+            _vim_op badd $( greadlink -f "$1" ) $1
             shift
         done
 
-        _vim_op edit "$1"
+        _vim_op edit $( greadlink -f "$1" ) $1
 
         [[ "$PWD" != "$( _vim_last_dir )" ]] && _vim_op cd -
     fi

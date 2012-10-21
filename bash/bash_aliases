@@ -9,17 +9,16 @@ alias sshv='bcvi --wrap-ssh -- '
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
-alias vim='/usr/local/Cellar/macvim/7.3-64/MacVim.app/Contents/MacOS/Vim'
+alias vim='/usr/local/Cellar/macvim-clipboard-support/7.3-64/MacVim.app/Contents/MacOS/Vim'
 if [[ -n $TMUX ]]; then
+    alias nvim='vim'
     alias vim='tmux-vim'
 fi
 
 alias '..'='cd ..'
 alias '...'='cd ../..'
 alias 'cd..'='cd ..'
-
-#mysql
-alias start_mysql='sudo /usr/local/mysql/bin/mysqld_safe &'
+alias ':q'='exit'
 
 # git
 alias gd='git diff'
@@ -31,3 +30,12 @@ alias push='git push'
 alias pull='git pull'
 
 alias tmux="TERM=xterm-256color tmux -u -2"
+
+# ruby
+alias be='bundle exec'
+alias guard='bundle exec guard'
+
+alias t='python ~/.bin/t --list tasks'
+alias tf='t -f'
+alias tc='t | wc -l'
+alias tree='tree -dCA -L 2'

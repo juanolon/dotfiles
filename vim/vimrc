@@ -51,7 +51,6 @@ Bundle 'kana/vim-smartinput'
 Bundle 'juvenn/mustache.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-markdown'
-Bundle 'SearchComplete'
 
 Bundle 'bclose'
 Bundle 'ezvimr'
@@ -66,9 +65,7 @@ syntax on "enable syntax highlight
 set shell=/bin/bash "set bash as default shell
 set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
-if $TMUX == ''
-  set clipboard=unnamed
-endif
+set clipboard=unnamed
 set fileformat=unix
 set noerrorbells
 " set nohidden
