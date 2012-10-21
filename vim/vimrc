@@ -19,26 +19,26 @@ set rtp+=~/dotfiles/vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
-Bundle 'sandeepcr529/Buffet.vim'
+" Bundle 'sandeepcr529/Buffet.vim'
 Bundle 'vim-scripts/CSApprox'
 Bundle 'kien/ctrlp.vim'
 Bundle 'maksimr/vim-jsbeautify'
 Bundle 'vim-scripts/matchit.zip'
-Bundle 'shawncplus/phpcomplete'
+Bundle 'shawncplus/phpcomplete.vim'
 Bundle 'ervandew/supertab'
 Bundle 'scrooloose/syntastic'
 Bundle 'sjl/threesome.vim'
 Bundle 'tomtom/tlib_vim'
-Bundle 'SirVer/ultisnips'
+" Bundle 'SirVer/ultisnips'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'skammer/vim-css-color'
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'tpope/vim-fugitive'
+" Bundle 'tpope/vim-fugitive'
 Bundle 'groenewege/vim-less'
 Bundle 'xolox/vim-notes'
-Bundle 'sickill/vim-pasta'
+" Bundle 'sickill/vim-pasta'
 Bundle 'jelera/vim-powerline'
 Bundle 'tpope/vim-surround'
 Bundle 'int3/vim-taglist-plus'
@@ -46,6 +46,12 @@ Bundle 'mileszs/ack.vim'
 Bundle 'sjl/gundo.vim'
 Bundle 'jeffkreeftmeijer/vim-numbertoggle'
 Bundle 'tomtom/tcomment_vim'
+Bundle 'drichard/vim-brunch'
+Bundle 'kana/vim-smartinput'
+Bundle 'juvenn/mustache.vim'
+Bundle 'godlygeek/tabular'
+Bundle 'tpope/vim-markdown'
+Bundle 'SearchComplete'
 
 Bundle 'bclose'
 Bundle 'ezvimr'
@@ -60,11 +66,10 @@ syntax on "enable syntax highlight
 set shell=/bin/bash "set bash as default shell
 set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
-"set clipboard+=unnamedplus
 if $TMUX == ''
-    set clipboard=unnamed
+  set clipboard=unnamed
 endif
-set fileformats=unix,dos,mac
+set fileformat=unix
 set noerrorbells
 " set nohidden
 set hidden
@@ -74,11 +79,6 @@ set autoread "set to auto read when a file is changed from the outside
 set gdefault "the /g flag on :s substitutions by default
 
 set encoding=utf-8 " Necessary to show unicode glyphs
-
-let mapleader = "-"
-let g:mapleader = "-"
-let maplocalleader = "_"
-let g:maplocalleader = "_"
 
 if ! isdirectory(expand('~/.vimbackup'))
   call mkdir(expand('~/.vimbackup'))
@@ -99,10 +99,6 @@ set directory=~/.vimtmp
 set tags=./tags;/
 "autocmd! bufwritepost vimrc source ~/.vimrc "when vimrc is edited, reload it
 
-" show rebundant spaces
-highlight RedundantSpaces ctermbg=grey guibg=grey
-au Syntax * syn match RedundantSpaces /\s\+$\| \+\ze\t/
-
 " close quick fix window, when leaving file
 aug QFClose
   au!
@@ -114,7 +110,12 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 let mapleader = ","
 
-set timeoutlen=500
+" Don't timeout key sequences
+set notimeout
+" Timeout key codes (don't wait after Esc)
+set ttimeout
+set timeoutlen=10
+
 if !has( "gui_running" )
     set term=screen-256color
 endif
@@ -127,41 +128,6 @@ set cursorline "hightlight the current line/column
 set cursorcolumn
 
 set laststatus=2 "always show the status bar
-" set stl=%f\ %m\ %r%{fugitive#statusline()}\ %{SyntaxItem()} Line:%l/%L[%p%%]\ Col:%v\ Buf:#%n\ [%b][0x%B]
-set stl=%f	"tail of the filename
-
-"display a warning if fileformat isnt linux
-set stl+=%#warningmsg#
-set stl+=%{&ff!='unix'?'['.&ff.']':''}
-set stl+=%*
-
-"display a warning if file encoding isnt utf-8
-set stl+=%#warningmsg#
-set stl+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
-set stl+=%*
-
-set stl+=%h      "help file flag
-set stl+=%y      "filetype
-set stl+=%r      "read only flag
-set stl+=%m      "modified flag
-
-set stl+=%{fugitive#statusline()}
-set stl+=%{SyntaxItem()}
-
-set stl+=%#warningmsg#
-set stl+=%{SyntasticStatuslineFlag()}
-set stl+=%*
-
-"display a warning if &paste is set
-set stl+=%#error#
-set stl+=%{&paste?'[paste]':''}
-set stl+=%*
-
-set stl+=%=	"left/right separator
-set stl+=%c,	"cursor column
-set stl+=%l/%L	"cursor line/total lines
-set stl+=\ %P		"percent through file
-
 set lazyredraw "do not redraw while running macros
 
 set selectmode=mouse "select when using the mouse
@@ -197,9 +163,18 @@ set guifont=Inconsolata-dz\ for\ Powerline:h11
 "set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
 
 "show characters
-"set list
-"set listchars=tab:\|\<Space>
+set list
+set listchars=tab:▸\ ,eol:¬
 
+" Show ↪ at the beginning of wrapped lines
+let &showbreak = nr2char(8618)
+
+" Folding based on indentation:
+set foldmethod=indent
+set nofoldenable " don't open folds by default
+" Close higher-level folds on foldenable
+set foldnestmax=1
+set foldlevel=1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Tabs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -230,6 +205,7 @@ let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'passive_filetypes': [ 'html' ] }
 let g:syntastic_jsl_conf = '$HOME/.vim/jsl.conf'
 
+" Powerline
 let g:Powerline_symbols = 'fancy'
 
 " let g:tabman_width = 35
@@ -241,8 +217,6 @@ if ! isdirectory(expand('~/notes'))
 endif
 let g:notes_directory = '~/notes'
 let g:notes_title_sync = 'change_title' " if file name or first line is changed, this update the first line
-
-let g:SuperTabDefaultCompletionType = "context"
 
 let g:miniBufExplUseSingleClick = 1 "open buffer with one click
 let g:miniBufExplorerMoreThanOne = 0 "always open bufexplorer
@@ -283,10 +257,11 @@ let my_ctrlp_git_command = "" .
 
 let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
 
-nnoremap <C-b> :CtrlPBuffer<CR> 
+nnoremap <C-b> :CtrlPBuffer<CR>
 
 " SuperTab
-let g:SuperTabLongestEnhanced = 1
+let g:SuperTabDefaultCompletionType = "context"
+" let g:SuperTabLongestEnhanced = 1 " disable, causing confict with smartinput
 set completeopt=menuone,longest
 if has('gui_running') " default mapping have trouble in console
     let g:SuperTabMappingForward = '<C-Space>'
@@ -313,17 +288,21 @@ vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
 onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
 onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
 
+" fix colors
+hi link EasyMotionTarget ErrorMsg
+hi link EasyMotionShade  Comment
+
 " UltiSnips
-let g:UltiSnipsEditSplit = 'vertical' " open edit window vertically
-let g:UltiSnipsExpandTrigger = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-let g:UltiSnipsSnippetDirectories = ["snippets"]
+" let g:UltiSnipsEditSplit = 'vertical' " open edit window vertically
+" let g:UltiSnipsExpandTrigger = '<tab>'
+" let g:UltiSnipsJumpForwardTrigger = '<tab>'
+" let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+" let g:UltiSnipsSnippetDirectories = ['snippets']
 
 " jsbeautify
-autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+autocmd FileType javascript noremap <buffer>  <c-M> :call JsBeautify()<cr>
+autocmd FileType html noremap <buffer> <c-M> :call HtmlBeautify()<cr>
+autocmd FileType css noremap <buffer> <c-M> :call CSSBeautify()<cr>
 
 "ACK
 " nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
@@ -331,11 +310,59 @@ autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 " if performance down
 " let loaded_matchparen = 1
 
+" SmartInput
+call smartinput#define_rule({
+            \   'at':       '(\%#)',
+            \   'char':     '<Space>',
+            \   'input':    '<Space><Space><Left>',
+            \   })
+
+call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
+call smartinput#define_rule({
+            \   'at':       '( \%# )',
+            \   'char':     '<BS>',
+            \   'input':    '<Del><BS>',
+            \   })
+
+call smartinput#define_rule({
+            \   'at':       '{\%#}',
+            \   'char':     '<Space>',
+            \   'input':    '<Space><Space><Left>',
+            \   })
+
+call smartinput#define_rule({
+            \   'at':       '{ \%# }',
+            \   'char':     '<BS>',
+            \   'input':    '<Del><BS>',
+            \   })
+
+call smartinput#define_rule({
+            \   'at':       '\[\%#\]',
+            \   'char':     '<Space>',
+            \   'input':    '<Space><Space><Left>',
+            \   })
+
+call smartinput#define_rule({
+            \   'at':       '\[ \%# \]',
+            \   'char':     '<BS>',
+            \   'input':    '<Del><BS>',
+            \   })
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Maps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " exits insert mode with jj
 inoremap jj <Esc>
+
+" noremap ; :
+" noremap : ;
+
+nnoremap n nzvzz
+nnoremap N Nzvzz
+nnoremap * *zvzz
+nnoremap # *zvzz
+
+cnoremap <expr> j getcmdline()[getcmdpos() - 2] ==# 'j' ? "\<BS>\<ESC>" : 'j'
 
 " Save with sudo.
 cnoremap w!! %!sudo tee > /dev/null %
@@ -358,15 +385,18 @@ map K i<CR><Esc>g;
 " toggle between displaying whitespace characters or not
 noremap <F11> :set list!<CR>
 
+" toggle syntastic mode
+nnoremap <F10> :SyntasticToggleMode<CR>
+
 " navigate through buffers with tab
-" noremap <C-S-tab> :bprev<CR> 
-" noremap <C-tab> :bnext<CR> 
-noremap <C-S-tab> :tabp<CR> 
-noremap <C-tab> :tabn<CR> 
+" noremap <C-S-tab> :bprev<CR>
+" noremap <C-tab> :bnext<CR>
+noremap <C-S-tab> :tabp<CR>
+noremap <C-tab> :tabn<CR>
 
 " use sane regex
 " vnoremap / /\v
-" vnoremap ? ?\v 
+" vnoremap ? ?\v
 " vnoremap s/ s/\v
 " vnoremap %s/ %s/\v
 " nnoremap / /\v
@@ -390,6 +420,9 @@ nnoremap <silent> <C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent> ∆ :set paste<CR>m`o<Esc>``:set nopaste<CR>
 nnoremap <silent> ˚ :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
+" Delete a character with the black hole register.
+nnoremap X  "_X
+nnoremap x  "_x
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -404,8 +437,38 @@ endfunction
 set scs "smart search (override 'ic' when pattern has upper)
 set complete=.,w,b,t "set the autocomplete search list
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme wombat " alternative: maloki, ir_black
 colorscheme wombat
+
+" show rebundant spaces
+highlight RedundantSpaces ctermbg=grey guibg=grey
+au Syntax * syn match RedundantSpaces /\s\+$\| \+\ze\t/
+highlight BadWhitespace ctermbg=red guibg=red
+fun! s:MatchBadWhitespace(current)
+    if exists('b:hide_bad_whitespace')
+        match none
+    return
+    endif
+    if a:current
+        match BadWhitespace /\s\+$/
+    else
+        match BadWhitespace /\s\+\%#\@<!$/
+    endif
+endfun
+
+augroup WhitespaceMatch
+    " Highlight whitespace on open buffer
+    autocmd BufWinEnter * call s:MatchBadWhitespace(1)
+    " Don't highlight while typing
+    autocmd InsertEnter * call s:MatchBadWhitespace(0)
+    autocmd InsertLeave * call s:MatchBadWhitespace(1)
+    " Clear match when leaving buffer to avoid memory leaks
+    autocmd BufWinLeave * call clearmatches()
+augroup END
+
 
 "set custom statusline for special windows
 "http://dev.gentoo.org/~bass/configs/vimrc.html
@@ -434,13 +497,13 @@ endif
 
 " Make sure Vim returns to the same line when you reopen a file.
 " Thanks, Amit
-augroup line_return
-    au!
-    au BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \     execute 'normal! g`"zvzz' |
-        \ endif
-augroup END
+" augroup line_return
+"     au!
+"     au BufReadPost *
+"         \ if line("'\"") > 0 && line("'\"") <= line("$") |
+"         \     execute 'normal! g`"zvzz' |
+"         \ endif
+" augroup END
 
 " Set the working directory to the project's root, or to the parent directory
 " of the current file if a root can't be found.
@@ -457,9 +520,6 @@ endfunc
 au BufEnter * if &ft !=# 'notes' | cal s:etwd() | endif " but don't change working directory, if opening notes
 " au BufEnter * cal s:etwd()
 
-" Set status line
-"set statusline=[%02n]\ %f\ %(\[%M%R%H]%)%=\ %4l,%02c%2V\ %P%*
-
 " nnoremap y "+y
 " vnoremap y "+y
 " nnoremap p "+p
@@ -472,4 +532,4 @@ autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#Complete
+" autocmd FileType c set omnifunc=ccomplete#Complete
