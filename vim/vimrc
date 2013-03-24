@@ -18,6 +18,8 @@ filetype off
 set rtp+=~/dotfiles/vim/bundle/vundle/
 call vundle#rc()
 
+" Vundle {{{
+
 " let Vundle manage Vundle
 " required!
 Bundle 'gmarik/vundle'
@@ -35,7 +37,7 @@ Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'skammer/vim-css-color'
 Bundle 'Lokaltog/vim-easymotion'
-" Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-fugitive'
 Bundle 'groenewege/vim-less'
 Bundle 'xolox/vim-notes'
 " Bundle 'sickill/vim-pasta'
@@ -51,15 +53,27 @@ Bundle 'kana/vim-smartinput'
 Bundle 'juvenn/mustache.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-markdown'
+Bundle 'othree/html5.vim'
+Bundle 'kshenoy/vim-signature'
+Bundle 'scrooloose/nerdtree'
+Bundle 'jistr/vim-nerdtree-tabs'
+Bundle 'beyondwords/vim-twig'
+Bundle 'majutsushi/tagbar'
+Bundle 'arnaud-lb/vim-php-namespace'
+" Bundle 'nfd/filepirate'
+Bundle 'Valloric/MatchTagAlways'
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'gregsexton/gitv'
+Bundle 'airblade/vim-gitgutter'
 
 Bundle 'bclose'
 Bundle 'ezvimr'
 Bundle 'ir_black'
 Bundle 'wombat'
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+
+" General {{{
 filetype plugin indent on "load filetype plugins/indent settings
 syntax on "enable syntax highlight
 set shell=/bin/bash "set bash as default shell
@@ -74,9 +88,15 @@ set history=1000 "keep 1000 lines of command line history
 set undolevels=1000
 set autoread "set to auto read when a file is changed from the outside
 set gdefault "the /g flag on :s substitutions by default
+set synmaxcol=800 "don't highlight lines longer than 800
 
 set encoding=utf-8 " Necessary to show unicode glyphs
+let mapleader = ","
+set tags=./tags;/
 
+" }}}
+
+" Backup {{{
 if ! isdirectory(expand('~/.vimbackup'))
   call mkdir(expand('~/.vimbackup'))
 endif
@@ -92,10 +112,17 @@ endif
 set undodir=~/.vimundo
 set undofile
 
+" backup
+set noswapfile
+set backup
+set backupdir=~/.vimbackup
+set backupext=.vimbackup
 set directory=~/.vimtmp
-set tags=./tags;/
+" }}}
+
 "autocmd! bufwritepost vimrc source ~/.vimrc "when vimrc is edited, reload it
 
+" Fixes {{{
 " close quick fix window, when leaving file
 aug QFClose
   au!
@@ -105,21 +132,19 @@ aug END
 " close scratch window
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
-let mapleader = ","
+" }}}
 
 " Don't timeout key sequences
 set notimeout
 " Timeout key codes (don't wait after Esc)
 set ttimeout
-set timeoutlen=10
+set ttimeoutlen=10
 
 if !has( "gui_running" )
     set term=screen-256color
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => UI
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" UI {{{
 set guioptions=acr
 set cursorline "hightlight the current line/column
 set cursorcolumn
@@ -127,7 +152,7 @@ set cursorcolumn
 set laststatus=2 "always show the status bar
 set lazyredraw "do not redraw while running macros
 
-set selectmode=mouse "select when using the mouse
+" set selectmode=mouse "select when using the mouse
 set cmdheight=2 "set the commandheight
 set nohlsearch "turn if highlight for searched expressions
 set incsearch "do incremental searches
@@ -138,13 +163,9 @@ set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg          " binary images
 set wildignore+=*.DS_Store?                             " OSX bullshit
 set wildignore+=*.pdf,*.dvi,*.ps                        " Documents
-set number
 
 set ignorecase "set ignorecase on
 set smartcase
-set backup
-set backupdir=~/.vimbackup
-set backupext=.vimbackup
 set ruler "show the cursor position all the time
 
 set scrolljump=5 "lines to scroll when cursor leaves screen
@@ -153,9 +174,10 @@ set showmatch
 set showmode "show the current mode
 
 set showcmd "show partial commands?
-set magic "for regular expressions?
+set magic "magic for regular expressions
 " set guifont=Mensch\ Regular\ for\ Powerline:h11
-set guifont=Inconsolata-dz\ for\ Powerline:h11
+" set guifont=Inconsolata-dz\ for\ Powerline:h11
+set anti enc=utf-8 gfn=Source_Code_Pro:h16,Menlo:h14,Monaco:h14
 
 "set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
 
@@ -164,7 +186,11 @@ set list
 set listchars=tab:▸\ ,eol:¬
 
 " Show ↪ at the beginning of wrapped lines
-let &showbreak = nr2char(8618)
+let showbreak = nr2char(8618)
+
+" }}}
+
+" Folding {{{
 
 " Folding based on indentation:
 set foldmethod=indent
@@ -172,9 +198,51 @@ set nofoldenable " don't open folds by default
 " Close higher-level folds on foldenable
 set foldnestmax=1
 set foldlevel=1
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Tabs
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" toggle with space
+vnoremap <Space> za
+nnoremap <Space> za
+
+fu! CustomFoldText()
+    "get first non-blank line
+    let fs = v:foldstart
+    while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+    endwhile
+    if fs > v:foldend
+        let line = getline(v:foldstart)
+    else
+        let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+    endif
+
+    let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+    let foldSize = 1 + v:foldend - v:foldstart
+    let foldSizeStr = " " . foldSize . " lines "
+    let foldLevelStr = repeat("+--", v:foldlevel)
+    let lineCount = line("$")
+    let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
+    let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
+    return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+endf
+function! MyFoldText() " {{{
+    let line = getline(v:foldstart)
+
+    let nucolwidth = &fdc + &number * &numberwidth
+    let windowwidth = winwidth(0) - nucolwidth - 3
+    let foldedlinecount = v:foldend - v:foldstart
+
+    " expand tabs into spaces
+    let onetab = strpart('          ', 0, &tabstop)
+    let line = substitute(line, '\t', onetab, 'g')
+
+    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
+    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
+endfunction " }}}
+set foldtext=CustomFoldText()
+
+" }}}
+
+" Tabs {{{
 set expandtab "insert space character, when tab key is pressed
 set tabstop=4 "tabs and indenting
 set shiftwidth=4
@@ -187,20 +255,23 @@ set shiftround "always round indents to multiple of shiftwidth
 set copyindent "use existind indents for new indents
 set preserveindent "save as much indent structure as possible
 
+" }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"syntastic settings
+"syntastic {{{
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1 " open error-windows
 let g:syntastic_auto_jump=1 " jump to the first error
 " let g:syntastic_disabled_filetypes = ['html']
 let g:syntastic_mode_map = { 'mode': 'passive',
-                           \ 'active_filetypes': [ 'php', 'javascript', 'JSON', 'sh', 'css', 'xml' ],
+                           \ 'active_filetypes': [ 'php', 'javascript', 'JSON', 'sh', 'css', 'xml', 'twig' ],
                            \ 'passive_filetypes': [ 'html' ] }
 let g:syntastic_jsl_conf = '$HOME/.vim/jsl.conf'
+
+" }}}
 
 " Powerline
 let g:Powerline_symbols = 'fancy'
@@ -208,7 +279,7 @@ let g:Powerline_symbols = 'fancy'
 " let g:tabman_width = 35
 " let g:tabman_number = 1 " shows column number
 
-" vim-notes
+" vim-notes {{{
 if ! isdirectory(expand('~/notes'))
   call mkdir(expand('~/notes'))
 endif
@@ -224,7 +295,9 @@ let g:miniBufExplMapCTabSwitchBufs = 1 "use <C-TAB> and <C-S-TAB> to switch betw
 let g:miniBufExplTabWrap = 1 " make tabs show complete (no broken on two lines)
 autocmd BufRead,BufNew :call UMiniBufExplorer "update explorer without navigating
 
-" CtrlP
+" }}}
+
+" CtrlP {{{
 let g:ctrlp_working_path_mode = 0 "don't change working directory..
 let g:ctrlp_match_window_reversed = 0 " listing order from top to bottom
 let g:ctrlp_clear_cache_on_exit = 0 " cross session caching
@@ -233,6 +306,7 @@ let g:ctrlp_max_depth = 20
 let g:ctrlp_dotfiles = 0 " don't scan dotfiles
 let g:ctrlp_open_new_file = 'u' " ope new file in same window
 let g:ctrlp_open_multiple_files = 'r' " open multiple files in the current window
+let g:ctrlp_jump_to_buffer = 0
 
 let egrep_vi_files = '7z|7|avi|bak|bin|bmp|db|docx|doc|exe|flac|flv|gif|ico|img|iso|jar|jpg|log|mkv|mp3|odg|ods|odt|pdf|plt|png|ppt|rar|tgz|wav|wma|wmv|xsl|zip|out|swp|swo'
 
@@ -249,14 +323,16 @@ let my_ctrlp_user_command = "" .
     \ ctrlp_filter_greps
 
 let my_ctrlp_git_command = "" .
-    \ "cd %s && git ls-files | " .
+    \ "cd %s && git ls-files --exclude-standard -co | " .
     \ ctrlp_filter_greps
 
 let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
 
+" }}}
+
 nnoremap <C-b> :CtrlPBuffer<CR>
 
-" SuperTab
+" SuperTab {{{
 let g:SuperTabDefaultCompletionType = "context"
 " let g:SuperTabLongestEnhanced = 1 " disable, causing confict with smartinput
 set completeopt=menuone,longest
@@ -267,11 +343,12 @@ else
     let g:SuperTabMappingForward = '<Nul>'
     let g:SuperTabMappingBackward = '<S-Nul>'
 endif
+" }}}
 
 " open buffet
-noremap <leader>b :Bufferlist<cr>
+" noremap <leader>b :Bufferlist<cr>
 
-" EasyMotion
+" EasyMotion {{{
 let g:EasyMotion_do_mapping = 0
 
 nnoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
@@ -288,6 +365,8 @@ onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
 " fix colors
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
+
+" }}}
 
 " UltiSnips
 " let g:UltiSnipsEditSplit = 'vertical' " open edit window vertically
@@ -307,7 +386,7 @@ autocmd FileType css noremap <buffer> <c-M> :call CSSBeautify()<cr>
 " if performance down
 " let loaded_matchparen = 1
 
-" SmartInput
+" SmartInput {{{
 call smartinput#define_rule({
             \   'at':       '(\%#)',
             \   'char':     '<Space>',
@@ -345,21 +424,119 @@ call smartinput#define_rule({
             \   'input':    '<Del><BS>',
             \   })
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Maps
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+" TagBar
+nmap <F8> :TagbarToggle<CR>
+
+" Gundo {{{
+nnoremap <F5> :GundoToggle<CR>
+let g:gundo_preview_bottom = 1
+
+" }}}
+
+" NerdTree {{{
+noremap  <F2> :NERDTreeToggle<cr>
+inoremap <F2> <esc>:NERDTreeToggle<cr>
+
+" }}}
+
+" filepirat {{{
+
+" nmap <C-t> :python filepirate_open()<CR>
+" let g:filepirate_up="<C-k>"
+" let g:filepirate_down="<C-j>"
+
+" }}}
+
+" MatchTagAlways {{{
+let g:mta_filetypes = {
+    \ 'html' : 1,
+    \ 'xhtml' : 1,
+    \ 'xml' : 1,
+    \ 'jinja' : 1,
+    \ 'ezp' : 1,
+    \}
+" }}}
+
+" gitgutter{{{
+let g:gitgutter_enabled = 0
+nnoremap <F4> :ToggleGitGutter<CR>
+" toggle highlighting
+" ToggleGitGutterLineHighlights
+" if errors on highlighting
+" highlight clear SignColumn
+" }}}
+
+" Highlight Word {{{
+" https://github.com/sjl/dotfiles/blob/master/vim/vimrc#L1827
+"
+" This mini-plugin provides a few mappings for highlighting words temporarily.
+"
+" Sometimes you're looking at a hairy piece of code and would like a certain
+" word or two to stand out temporarily.  You can search for it, but that only
+" gives you one color of highlighting.  Now you can use <leader>N where N is
+" a number from 1-6 to highlight the current word in a specific color.
+
+function! HiInterestingWord(n)
+    " Save our location.
+    normal! mz
+
+    " Yank the current word into the z register.
+    normal! "zyiw
+
+    " Calculate an arbitrary match ID.  Hopefully nothing else is using it.
+    let mid = 86750 + a:n
+
+    " Clear existing matches, but don't worry if they don't exist.
+    silent! call matchdelete(mid)
+
+    " Construct a literal pattern that has to match at boundaries.
+    let pat = '\V\<' . escape(@z, '\') . '\>'
+
+    " Actually match the words.
+    call matchadd("InterestingWord" . a:n, pat, 1, mid)
+
+    " Move back to our original location.
+    normal! `z
+endfunction
+
+nnoremap <silent> <leader>1 :call HiInterestingWord(1)<cr>
+nnoremap <silent> <leader>2 :call HiInterestingWord(2)<cr>
+nnoremap <silent> <leader>3 :call HiInterestingWord(3)<cr>
+nnoremap <silent> <leader>4 :call HiInterestingWord(4)<cr>
+nnoremap <silent> <leader>5 :call HiInterestingWord(5)<cr>
+nnoremap <silent> <leader>6 :call HiInterestingWord(6)<cr>
+
+hi def InterestingWord1 guifg=#000000 ctermfg=16 guibg=#ffa724 ctermbg=214
+hi def InterestingWord2 guifg=#000000 ctermfg=16 guibg=#aeee00 ctermbg=154
+hi def InterestingWord3 guifg=#000000 ctermfg=16 guibg=#8cffba ctermbg=121
+hi def InterestingWord4 guifg=#000000 ctermfg=16 guibg=#b88853 ctermbg=137
+hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
+hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
+
+" }}}
+
+" Maps {{{
 " exits insert mode with jj
 inoremap jj <Esc>
-
-" noremap ; :
-" noremap : ;
+cnoremap <expr> j getcmdline()[getcmdpos() - 2] ==# 'j' ? "\<BS>\<ESC>" : 'j'
 
 nnoremap n nzvzz
 nnoremap N Nzvzz
 nnoremap * *zvzz
 nnoremap # *zvzz
+nnoremap g; g;zz
+nnoremap g, g,zz
+nnoremap <c-o> <c-o>zz
 
-cnoremap <expr> j getcmdline()[getcmdpos() - 2] ==# 'j' ? "\<BS>\<ESC>" : 'j'
+" remove unwanted spaces and keep last search
+nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+nnoremap <silent> <F6> :set hlsearch!<CR>
+nnoremap <silent> <F7> :retab<CR>
+" toggle syntastic mode
+nnoremap <F10> :SyntasticToggleMode<CR>
+" toggle between displaying whitespace characters or not
+noremap <F11> :set list!<CR>
 
 " Save with sudo.
 cnoremap w!! %!sudo tee > /dev/null %
@@ -376,40 +553,12 @@ noremap <Down> <nop>
 noremap <Left> <nop>
 noremap <Right> <nop>
 
+" start/end of line
+nnoremap <C-h> ^
+nnoremap <C-l> $
+
 " split lines under the cursor (opposite of J)
 map K i<CR><Esc>g;
-
-" toggle between displaying whitespace characters or not
-noremap <F11> :set list!<CR>
-
-" toggle syntastic mode
-nnoremap <F10> :SyntasticToggleMode<CR>
-
-" navigate through buffers with tab
-" noremap <C-S-tab> :bprev<CR>
-" noremap <C-tab> :bnext<CR>
-noremap <C-S-tab> :tabp<CR>
-noremap <C-tab> :tabn<CR>
-
-" use sane regex
-" vnoremap / /\v
-" vnoremap ? ?\v
-" vnoremap s/ s/\v
-" vnoremap %s/ %s/\v
-" nnoremap / /\v
-" nnoremap ? ?\v
-" nnoremap s/ s/\v
-" nnoremap %s/ %s/\v
-" cnoremap s/ s/\v
-" cnoremap %s/ %s/\v
-
-" start/end of line
-vnoremap <C-h> ^
-vnoremap <C-l> $
-
-" folds
-vnoremap <Space> za
-nnoremap <Space> za
 
 " Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
 nnoremap <silent> <C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
@@ -420,6 +569,26 @@ nnoremap <silent> ˚ :set paste<CR>m`O<Esc>``:set nopaste<CR>
 " Delete a character with the black hole register.
 nnoremap X  "_X
 nnoremap x  "_x
+
+cnoremap <C-b> <S-Left>
+cnoremap <C-w> <S-Right>
+cnoremap <C-j> <Down>
+cnoremap <C-k> <Up>
+cnoremap <C-h> <Left>
+cnoremap <C-l> <Right>
+
+" Don't move on *
+" nnoremap * *<c-o>asd
+
+" Fix linewise visual selection of various text objects
+nnoremap VV V
+nnoremap Vit vitVkoj
+nnoremap Vat vatV
+nnoremap Vab vabV
+nnoremap VaB vaBV
+
+" }}}
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -434,6 +603,129 @@ endfunction
 set scs "smart search (override 'ic' when pattern has upper)
 set complete=.,w,b,t "set the autocomplete search list
 
+" Next and Last {{{
+" thanks steve losh
+
+"
+" Motion for "next/last object".  "Last" here means "previous", not "final".
+" Unfortunately the "p" motion was already taken for paragraphs.
+"
+" Next acts on the next object of the given type in the current line, last acts
+" on the previous object of the given type in the current line.
+"
+" Currently only works for (, [, {, b, r, B, ', and ".
+"
+" Some examples (C marks cursor positions, V means visually selected):
+"
+" din'  -> delete in next single quotes                foo = bar('spam')
+"                                                      C
+"                                                      foo = bar('')
+"                                                                C
+"
+" canb  -> change around next parens                   foo = bar('spam')
+"                                                      C
+"                                                      foo = bar
+"                                                               C
+"
+" vil"  -> select inside last double quotes            print "hello ", name
+"                                                                        C
+"                                                      print "hello ", name
+"                                                             VVVVVV
+
+onoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
+xnoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
+onoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
+xnoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
+
+onoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
+xnoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
+onoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
+xnoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
+
+function! s:NextTextObject(motion, dir)
+  let c = nr2char(getchar())
+
+  if c ==# "b"
+      let c = "("
+  elseif c ==# "B"
+      let c = "{"
+  elseif c ==# "r"
+      let c = "["
+  endif
+
+  exe "normal! ".a:dir.c."v".a:motion.c
+endfunction
+
+" }}}
+" Numbers {{{
+
+" Motion for numbers.  Great for CSS.  Lets you do things like this:
+"
+" margin-top: 200px; -> daN -> margin-top: px;
+"              ^                          ^
+" TODO: Handle floats.
+
+onoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
+xnoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
+onoremap aN :<c-u>call <SID>NumberTextObject(1)<cr>
+xnoremap aN :<c-u>call <SID>NumberTextObject(1)<cr>
+onoremap iN :<c-u>call <SID>NumberTextObject(1)<cr>
+xnoremap iN :<c-u>call <SID>NumberTextObject(1)<cr>
+
+function! s:NumberTextObject(whole)
+    normal! v
+
+    while getline('.')[col('.')] =~# '\v[0-9]'
+        normal! l
+    endwhile
+
+    if a:whole
+        normal! o
+
+        while col('.') > 1 && getline('.')[col('.') - 2] =~# '\v[0-9]'
+            normal! h
+        endwhile
+    endif
+endfunction
+
+" }}}
+"
+" Pulse Line {{{
+
+function! s:Pulse() " {{{
+    let current_window = winnr()
+    windo set nocursorline
+    execute current_window . 'wincmd w'
+    setlocal cursorline
+
+    redir => old_hi
+        silent execute 'hi CursorLine'
+    redir END
+    let old_hi = split(old_hi, '\n')[0]
+    let old_hi = substitute(old_hi, 'xxx', '', '')
+
+    let steps = 9
+    let width = 1
+    let start = width
+    let end = steps * width
+    let color = 233
+
+    for i in range(start, end, width)
+        execute "hi CursorLine ctermbg=" . (color + i)
+        redraw
+        sleep 6m
+    endfor
+    for i in range(end, start, -1 * width)
+        execute "hi CursorLine ctermbg=" . (color + i)
+        redraw
+        sleep 6m
+    endfor
+
+    execute 'hi ' . old_hi
+endfunction " }}}
+command! -nargs=0 Pulse call s:Pulse()
+
+" }}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -494,13 +786,13 @@ endif
 
 " Make sure Vim returns to the same line when you reopen a file.
 " Thanks, Amit
-" augroup line_return
-"     au!
-"     au BufReadPost *
-"         \ if line("'\"") > 0 && line("'\"") <= line("$") |
-"         \     execute 'normal! g`"zvzz' |
-"         \ endif
-" augroup END
+augroup line_return
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"zvzz' |
+        \ endif
+augroup END
 
 " Set the working directory to the project's root, or to the parent directory
 " of the current file if a root can't be found.
@@ -517,16 +809,22 @@ endfunc
 au BufEnter * if &ft !=# 'notes' | cal s:etwd() | endif " but don't change working directory, if opening notes
 " au BufEnter * cal s:etwd()
 
-" nnoremap y "+y
-" vnoremap y "+y
-" nnoremap p "+p
-" vnoremap p "+p
+" filetypes {{{
+augroup ft_c
+    au!
+    au FileType php setlocal foldmethod=marker foldmarker={,}
+augroup END
+augroup ft_vim
+    au!
+    au FileType vim setlocal foldmethod=marker
+    au FileType css set omnifunc=csscomplete#CompleteCSS
+augroup END
+" }}}
 
 "activate omnifunc: strg-x o
 autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 " autocmd FileType c set omnifunc=ccomplete#Complete

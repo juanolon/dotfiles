@@ -1,77 +1,26 @@
-# set echo-control-characters Off
-# set enable-keypad On
-# set mark-symlinked-directories On
-# set show-all-if-unmodified On
-# set skip-completed-text On
+bind 'set bind-tty-special-chars Off'
 bind 'set visible-stats on'
 bind 'set show-all-if-ambiguous on' # autocomplete with one tab
 bind 'set completion-ignore-case on' # case-insensitive autocomplete
 bind 'set completion-map-case on' # turns test-dahs to test_dash
 bind 'set match-hidden-files off'
 
-# bind 'set keymap vi'
-# bind 'set editing-mode vi'
-
-# "\M-l": "ll\n"
-# "\M-h": "cdhist\r"
-
-# If you type any text and press Up/Down,
-# you can search your history for commands starting
-# with that text
-# "\e[B": history-search-forward
-# "\e[A": history-search-backward
-
-# Use Ctrl or Alt Arrow keys to move along words
-# "\e[5C": forward-word
-# "\e[5D": backward-word
-
-# "\M-r": forward-search-history
-
-# new settings
 # be 8 bit clean
-set input-meta on
-set output-meta on
-set convert-meta off
+bind 'set input-meta on'
+bind 'set output-meta on'
+bind 'set convert-meta off'
 
-# # Ctrl+arrows
-# "\e[1;5C": forward-word
-# "\e[1;5D": backward-word
-# 
-# # Alt+arrows
-# "\e[1;3C": forward-word
-# "\e[1;3D": backward-word
-# 
-# # Vim-style word movement: Alt+[w|e|b]
-# "\ew": forward-word
-# "\ee": forward-word
-# "\eb": backward-word
-# 
-# # Alt+[h|l]
-# "\eh": beginning-of-line
-# "\el": end-of-line
-# "\M-h": beginning-of-line
-# "\M-l": end-of-line
-# 
-# # Vim-style history search: Alt+[j|k]
-# "\ej": history-search-forward
-# "\ek": history-search-backward
-# "\M-j": history-search-forward
-# "\M-k": history-search-backward
-# 
-# # Alt+r/s instead of Ctrl+r/s
-# "\er": reverse-search-history
-# "\es": forward-search-history
-# "\M-r": reverse-search-history
-# "\M-s": forward-search-history
-# 
-# #set editing-mode vi
-# $if mode=vi
-#   set keymap vi-command
-#   "gg": beginning-of-history
-#   "G": end-of-history
-#   "j": history-search-forward
-#   "k": history-search-backward
-#   set keymap vi-insert
-#   "jj": vi-movement-mode
-#   "\C-w": backward-kill-word
-# $endif
+# Ctrl+arrows
+# bind '"\e[1;5C": forward-word'
+# bind '"\e[1;5D": backward-word'
+
+# no more leaving home :)
+bind '"\C-j": history-search-forward'
+bind '"\C-k": history-search-backward'
+bind '"\C-h": backward-char'
+bind '"\C-l": forward-char'
+bind '"\C-u": clear-screen'
+bind '"\C-d": backward-kill-word'
+bind '"\C-b": backward-word'
+bind '"\C-w": forward-word'
+bind '"\C-x": forward-backward-delete-char'

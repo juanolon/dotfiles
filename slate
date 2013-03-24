@@ -1,0 +1,63 @@
+# Config's directive: config name value
+# Default to the current screen if the screen the reference does not exist.
+config defaultToCurrentScreen true
+# The base value for nudge percent calculation
+config nudgePercentOf screenSize
+# The base value for resize percent calculation
+config resizePercentOf screenSize
+config windowHintsShowIcons true
+config windowHintsIgnoreHiddenWindows false
+config windowHintsSpread true
+
+# Alias' directive: alias name value
+
+alias full        move screenOriginX;screenOriginY screenSizeX;screenSizeY
+alias lefthalf    move screenOriginX;screenOriginY screenSizeX/2;screenSizeY
+alias righthalf   move screenOriginX+screenSizeX/2;screenOriginY screenSizeX/2;screenSizeY
+alias tophalf     move screenOriginX;screenOriginY screenSizeX;screenSizeY/2
+alias bottomhalf  move screenOriginX;screenOriginY+screenSizeY/2 screenSizeX;screenSizeY/2
+alias topleft     corner top-left resize:screenSizeX/2;screenSizeY/2
+alias topright    corner top-right resize:screenSizeX/2;screenSizeY/2
+alias bottomleft  corner bottom-left resize:screenSizeX/2;screenSizeY/2
+alias bottomright corner bottom-right resize:screenSizeX/2;screenSizeY/2
+
+# Layout's directive - layout name 'app name':OPTIONS operations
+
+# Creates the aliases needed for this example
+alias 0-full move screenOriginX;screenOriginY screenSizeX;screenSizeY 0
+alias 1-full move screenOriginX;screenOriginY screenSizeX;screenSizeY 1
+
+alias hyper ctrl;shift;alt;cmd
+
+# Default's directive: default layout-or-snapshot-name screen-configuration
+
+# Triggers the twoScreenLayout when there are 2 monitors.
+default twoScreenLayout count:2
+
+# Bind's directives: bind key:modifiers operation parameter+
+#                    bind key:modal-key operation parameter+
+
+# Location - Sets the window to the specified location.
+bind u:${hyper} ${full}
+bind k:${hyper}      ${tophalf}
+bind j:${hyper}      ${bottomhalf}
+bind h:${hyper}      ${lefthalf}
+bind b:${hyper}      ${bottomleft}
+bind y:${hyper}      ${topleft}
+bind l:${hyper}      ${righthalf}
+bind .:${hyper}      ${bottomright}
+bind p:${hyper}      ${topright}
+
+bind ;:${hyper}      throw next
+bind space:${hyper}  hint JKLGHASDFNMVC
+# Resize - Resizes the window in the specified direction
+bind l:alt resize +1% +0
+
+# Nudge - Nudges the window in the specified direction
+bind h:${hyper};cmd nudge -1% +0
+bind j:${hyper};cmd nudge +0 +1%
+bind k:${hyper};cmd nudge +0 -1%
+bind l:${hyper};cmd nudge +1% +0
+
+# Focus - Brings the focus to the window in the specified position
+bind l:shift;ctrl focus right

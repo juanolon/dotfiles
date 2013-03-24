@@ -8,11 +8,13 @@ HERE=`pwd`
 HOME='/Users/juanolon/test_home'
 
 # TODO: check wich OS run
+# target folder : file (relative to this script : target file name
 files=( "HOME:gitconfig:.gitconfig"
         "HOME:vim/vimrc:.vimrc" 
         "HOME:vim/vimrc:.vimrc" 
         "HOME:vim/vimrc:.vimrc" 
-        "KEYBOARD_DIR:custom_us_ukelele.keylayout:custom_us.keylayout" )
+        "KEYBOARD_DIR:custom_us_ukelele.keylayout:custom_us.keylayout"
+        "HOME:bin/:.bin" )
 
 for i in "${files[@]}"
 do
