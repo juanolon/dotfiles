@@ -65,6 +65,7 @@ Bundle 'Valloric/MatchTagAlways'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'gregsexton/gitv'
 Bundle 'airblade/vim-gitgutter'
+Bundle 'derekwyatt/vim-scala'
 
 Bundle 'bclose'
 Bundle 'ezvimr'
@@ -93,6 +94,9 @@ set synmaxcol=800 "don't highlight lines longer than 800
 set encoding=utf-8 " Necessary to show unicode glyphs
 let mapleader = ","
 set tags=./tags;/
+
+" colorscheme wombat " alternative: maloki, ir_black
+colorscheme wombat
 
 " }}}
 
@@ -523,11 +527,14 @@ cnoremap <expr> j getcmdline()[getcmdpos() - 2] ==# 'j' ? "\<BS>\<ESC>" : 'j'
 
 nnoremap n nzvzz
 nnoremap N Nzvzz
-nnoremap * *zvzz
+" nnoremap * *zvzz
 nnoremap # *zvzz
 nnoremap g; g;zz
 nnoremap g, g,zz
 nnoremap <c-o> <c-o>zz
+
+" Don't move on *
+nnoremap * *<c-o>asd
 
 " remove unwanted spaces and keep last search
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
@@ -541,6 +548,7 @@ noremap <F11> :set list!<CR>
 " Save with sudo.
 cnoremap w!! %!sudo tee > /dev/null %
 cnoremap W w
+cnoremap Bd bd
 
 noremap k gk
 noremap j gj
@@ -577,15 +585,16 @@ cnoremap <C-k> <Up>
 cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 
-" Don't move on *
-" nnoremap * *<c-o>asd
-
 " Fix linewise visual selection of various text objects
 nnoremap VV V
 nnoremap Vit vitVkoj
 nnoremap Vat vatV
 nnoremap Vab vabV
 nnoremap VaB vaBV
+
+nnoremap <leader>V V`]
+
+noremap ' `
 
 " }}}
 
@@ -729,8 +738,6 @@ command! -nargs=0 Pulse call s:Pulse()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" colorscheme wombat " alternative: maloki, ir_black
-colorscheme wombat
 
 " show rebundant spaces
 highlight RedundantSpaces ctermbg=grey guibg=grey
