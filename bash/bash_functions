@@ -36,3 +36,12 @@ extract () {
        echo "'$1' is not a valid file!"
    fi
 }
+
+function diff {
+    colordiff -u "$@" | less -RF
+}
+
+# genpasswd <lenght>
+genpasswd() {
+    pwgen -Bs $1 1 |pbcopy | echo `pbpaste`; echo " - Has been copied to clipboard"
+}

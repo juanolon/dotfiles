@@ -13,6 +13,7 @@
 #
 #   TMUX_VIM_CONFIG   - path to config file (default ~/.tmux-vim.conf)
 #   TMUX_VIM_VIM_ARGS - command-line args to pass to vim (default none)
+#   TMUX_VIM_VIM_EXTRA_ARGS - how should the file be open.. (default :edit)
 #   TMUX_VIM_VIM_BIN  - executable to use for vim (default vim)
 #   TMUX_VIM_TMUX_BIN - executable to use for tmux (default tmux)
 #   TMUX_VIM_LAYOUT   - layout options (default mode:shell,orient:horiz,width:132)
@@ -183,7 +184,7 @@ _vim_op() {
 _vim_start() {
     if _tmux_is_running; then
         # tmux_vim already exists - try to select that pane
-        $tmux select-window -t $( _vim_window_id ) 
+        $tmux select-window -t $( _vim_window_id )
         $tmux select-pane -t $( _vim_pane_id ) && return 1
 
         # If we get here, that pane no longer exists, so fall thru
@@ -365,12 +366,13 @@ tmux_vim() {
             shift
         done
 
-        _vim_op edit $( greadlink -f "$1" ) $1
+        local openfile=${TMUX_VIM_VIM_EXTRA_ARGS:-"edit"}
+        _vim_op $openfile $( greadlink -f "$1" ) $1
 
         [[ "$PWD" != "$( _vim_last_dir )" ]] && _vim_op cd -
     fi
 
-    $tmux select-pane -t $( _vim_pane_id )
+    $tmux select-window -t $( _vim_pane_id )
 }
 
 tmux_vim "$@"

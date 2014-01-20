@@ -14,10 +14,10 @@
 [alias]
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [merge]
-tool = threesome
+tool = splice
 
-[mergetool "threesome"]
-cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
+[mergetool "splice"]
+cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'SpliceInit'"
 trustExitCode = true
 [advice]
-	statusHints = false
+    statusHints = false

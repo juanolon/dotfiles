@@ -1,0 +1,11 @@
+#!/bin/bash
+# tv
+#
+# persistent vim window for tmux
+#
+# Usage:
+#
+#   tv [file [files...]]
+#
+# Configuration:
+#

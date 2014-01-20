@@ -1280,7 +1280,9 @@ sub execute_vi {
 
     my $alias = $self->calling_host();
     my @files = map { "scp://$alias/$_" } $self->get_filenames();
-    system('vim', '--', @files);
+    $self->DEBUG("Dispatching to: @files");
+    #ToDo: if in tmux use tmux-vim, otherwise use vim
+    system('tmux-vim', @files);
 }
 
 

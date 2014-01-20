@@ -3,7 +3,7 @@
 
 # add android tools and mysqlbin to path
 # from php53 caveats, add /usr/local/opt/php53/bin ( PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH" )
-export PATH=/usr/local/opt/php53/bin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/.android/tools:$HOME/.rvm/bin:/usr/local/share/python:$HOME/.bin:$PATH
+export PATH=/usr/local/opt/php54/bin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/.android/tools:$HOME/.rvm/bin:/usr/local/share/python:$HOME/.bin:$PATH
 
 export NODE_PATH="/usr/local/share/npm/lib/node_modules"
 
@@ -83,10 +83,18 @@ done
 . ~/.bash/bash_aliases
 . ~/.bash/bash_functions
 . ~/.bash/bash_inputrc
-. ~/dotfiles/bin/z.sh
-source "`brew --prefix`/etc/grc.bashrc"
+. ~/.bash/scripts/z.sh
+if [ -f `brew --prefix`/etc/grc.bashrc ]; then
+    source "`brew --prefix`/etc/grc.bashrc"
+fi
 
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US"
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+export PATH=/Users/juanolon/.bin/Sencha/Cmd/4.0.1.45:$PATH
+
+export SENCHA_CMD_3_0_0="/Users/juanolon/.bin/Sencha/Cmd/4.0.1.45"
+
+export PIP2EVAL_TMP_FILE_PATH=/tmp/shms

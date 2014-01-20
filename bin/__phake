@@ -1,0 +1,3 @@
+#!/bin/bash
+location=$HOME/dotfiles/bin
+php $location/phakesrc/bin/phake "$@"

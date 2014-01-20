@@ -4,7 +4,3 @@
 *.swo
 vim/bundle
 !vim/bundle/vundle/
-!vim/bundle/ezvimr/
-!vim/bundle/ir_black/
-!vim/bundle/wombat/
-!vim/bundle/bclose/

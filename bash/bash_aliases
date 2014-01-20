@@ -9,10 +9,12 @@ alias sshv='bcvi --wrap-ssh -- '
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
-alias vim='/Applications/MacVim.app/Contents/MacOS/Vim'
+# alias vim='/Applications/MacVim.app/Contents/MacOS/Vim'
 if [[ -n $TMUX ]]; then
     alias nvim='vim'
-    alias vim='tmux-vim'
+    vim() { tmux-vim "$@"; }
+    alias pbcopy='reattach-to-user-namespace pbcopy'
+    alias pbpaste='reattach-to-user-namespace pbpaste'
 fi
 
 alias '..'='cd ..'
@@ -39,5 +41,7 @@ alias t='python ~/.bin/t --task-dir="~/notes/tasks" --list tasks'
 alias tf='t -f'
 alias tc='t | wc -l'
 alias tree='tree -dCA -L 2'
+
+alias json='jq'
 
 alias fixvirtualbox='sudo chmod 755 /Applications && chmod 755 /Applications/Virtualbox.app'

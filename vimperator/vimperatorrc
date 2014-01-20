@@ -1,0 +1,5 @@
+" encripted google - is better for hints (it has less links)
+:bmark https://encrypted.google.com/search?sclient=psy&hl=en&complete=0&site=webhp&source=hp&q=%s -keyword google
+set defsearch=google
+
+set editor='bash -lc "mvim -f \$*" mvim '
