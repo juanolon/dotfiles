@@ -47,6 +47,8 @@
 
 # Set these once and for all - they won't change
 
+# https://github.com/sdt/tmux-vim
+
 tmux=${TMUX_VIM_TMUX_BIN:-tmux}
 
 tmux_window_id=$( $tmux lsp -a -F '#{pane_id}=#{window_index}' |\
@@ -127,7 +129,7 @@ _vim_send_keys() {
 }
 
 _tmux_is_running() {
-    local pane_id=$( _vim_pane_id )
+    local pane_id=%$( _vim_pane_id )
     [[ -n $pane_id ]] && $tmux lsp -sF '#{pane_id}' | grep -q ^$pane_id$
 }
 
@@ -184,7 +186,7 @@ _vim_op() {
 _vim_start() {
     if _tmux_is_running; then
         # tmux_vim already exists - try to select that pane
-        $tmux select-window -t $( _vim_window_id )
+        $tmux select-window -t $(tmux display -p '#S'):$( _vim_window_id )
         $tmux select-pane -t $( _vim_pane_id ) && return 1
 
         # If we get here, that pane no longer exists, so fall thru
@@ -324,7 +326,8 @@ _vim_start() {
     # Now convert the pane index into a global persistent id
     # 0:1.1: [100x88] [history 0/10000, 0 bytes] %2
     # ^^^^^ $tmux_vim_pane              pane_id  ^^
-    _vim_pane_id $( $tmux lsp -a | grep ^$tmux_vim_pane | grep -o '%[0-9]\+' )
+    echo "tmux_vim_pane" $tmux_vim_pane
+    _vim_pane_id $( $tmux lsp -a | grep ^$tmux_vim_pane | grep -o '[0-9]\+' )
     _vim_window_id ${tmux_vim_pane#*:}
     _vim_last_dir "$PWD"
 
@@ -372,7 +375,7 @@ tmux_vim() {
         [[ "$PWD" != "$( _vim_last_dir )" ]] && _vim_op cd -
     fi
 
-    $tmux select-window -t $( _vim_pane_id )
+    $tmux select-window -t $(tmux display -p '#S'):$( _vim_pane_id )
 }
 
 tmux_vim "$@"

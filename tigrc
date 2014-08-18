@@ -1,0 +1,3 @@
+bind generic L move-last-line
+bind generic H move-first-line
+bind status a !@git add -N %(file)

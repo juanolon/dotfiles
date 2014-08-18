@@ -6,6 +6,7 @@
 export PATH=/usr/local/opt/php54/bin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/.android/tools:$HOME/.rvm/bin:/usr/local/share/python:$HOME/.bin:$PATH
 
 export NODE_PATH="/usr/local/share/npm/lib/node_modules"
+export GOPATH="$HOME/gocode"
 
 # don't save duplicates in history
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries

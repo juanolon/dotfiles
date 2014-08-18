@@ -24,55 +24,64 @@ call vundle#rc()
 " let Vundle manage Vundle
 " required!
 Bundle 'gmarik/vundle'
-Bundle 'kien/ctrlp.vim'
-" Bundle 'maksimr/vim-jsbeautify'
-Bundle 'vim-scripts/matchit.zip'
-Bundle 'shawncplus/phpcomplete.vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'sjl/splice.vim'
-Bundle 'skammer/vim-css-color'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'groenewege/vim-less'
-" required for vim-notes
-Bundle 'xolox/vim-misc'
-Bundle 'xolox/vim-notes'
+
+" ##### UI
+Bundle 'chriskempson/base16-vim'
 Bundle 'bling/vim-airline'
+Bundle 'kien/ctrlp.vim'
+" ToDo: configure signature
+Bundle 'kshenoy/vim-signature'
+Bundle 'Shougo/neocomplete.vim'
+" Bundle 'airblade/vim-gitgutter'
+Bundle 'ivyl/vim-bling'
+
+" ##### Helpers
 Bundle 'tpope/vim-surround'
 Bundle 'epmatsw/ag.vim'
-Bundle 'sjl/gundo.vim'
 " ToDo: check tcomment syntax
 Bundle 'tomtom/tcomment_vim'
 Bundle 'kana/vim-smartinput'
-Bundle 'mustache/vim-mustache-handlebars'
+Bundle 'vim-scripts/matchit.zip'
+Bundle 'scrooloose/syntastic'
+Bundle 'Lokaltog/vim-easymotion'
 Bundle 'godlygeek/tabular'
-Bundle 'tpope/vim-markdown'
-Bundle 'othree/html5.vim'
-" ToDo: configure signature
-Bundle 'kshenoy/vim-signature'
-" ToDo: configure nerdtree
-" Bundle 'scrooloose/nerdtree'
-" Bundle 'jistr/vim-nerdtree-tabs'
-Bundle 'beyondwords/vim-twig'
-" Bundle 'majutsushi/tagbar'
-" adds use statement for the class under the cursor
-" Bundle 'arnaud-lb/vim-php-namespace'
-Bundle 'Valloric/MatchTagAlways'
-" Bundle 'Valloric/YouCompleteMe'
-" scala plugin..
-" Bundle 'derekwyatt/vim-scala'
-" vim-tmux bridge for scala
-" Bundle 'adinapoli/staircase'
+Bundle 'regedarek/ZoomWin'
+Bundle 'zhaocai/GoldenView.Vim'
 Bundle 'tpope/vim-repeat'
-Bundle 'Shougo/neocomplete.vim'
+
+" ##### Tools
+" required for vim-notes
+Bundle 'xolox/vim-misc'
+Bundle 'xolox/vim-notes'
+Bundle 'sjl/splice.vim'
+Bundle 'sjl/gundo.vim'
 Bundle 'vim-scripts/TaskList.vim'
-Bundle 'chriskempson/base16-vim'
+" ToDo: configure nerdtree
+Bundle 'scrooloose/nerdtree'
+Bundle 'tpope/vim-vinegar'
+
+" ##### FileTypes
+Bundle 'othree/html5.vim'
+Bundle 'Valloric/MatchTagAlways'
+Bundle 'beyondwords/vim-twig'
+Bundle 'groenewege/vim-less'
+Bundle 'tpope/vim-markdown'
 Bundle 'suan/vim-instant-markdown'
-Bundle 'ivyl/vim-bling'
-Bundle 'zweifisch/pipe2eval'
 Bundle 'pangloss/vim-javascript'
-Bundle 'epeli/slimux'
-Bundle 'StanAngeloff/php.vim'
-Bundle 'vim-scripts/eZVim'
+" Bundle 'maksimr/vim-jsbeautify'
+Bundle 'fatih/vim-go'
+" Bundle 'm2mdas/phpcomplete-extended'
+" Bundle 'm2mdas/phpcomplete-extended-laravel'
+" Bundle 'm2mdas/phpcomplete-extended-symfony'
+Bundle 'BlackIkeEagle/vdebug'
+Bundle 'drwX/php-doc.vim'
+
+
+" Bundle 'majutsushi/tagbar'
+" Bundle 'Valloric/YouCompleteMe'
+" Bundle 'zweifisch/pipe2eval'
+" Bundle 'Shougo/vimproc'
+" Bundle 'Shougo/unite.vim'
 
 " }}}
 
@@ -80,7 +89,7 @@ Bundle 'vim-scripts/eZVim'
 filetype plugin indent on "load filetype plugins/indent settings
 syntax on "enable syntax highlight
 set shell=/bin/bash "set bash as default shell
-set autochdir "always switch to the current file directory
+" set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
 set clipboard=unnamed
 set fileformat=unix
@@ -275,6 +284,37 @@ set preserveindent "save as much indent structure as possible
 
 " }}}
 
+" NETRW {{{
+" Toggle Vexplore with Ctrl-E
+function! ToggleVExplorer()
+  if exists("t:expl_buf_num")
+      let expl_win_num = bufwinnr(t:expl_buf_num)
+      if expl_win_num != -1
+          let cur_win_nr = winnr()
+          exec expl_win_num . 'wincmd w'
+          close
+          exec cur_win_nr . 'wincmd w'
+          unlet t:expl_buf_num
+      else
+          unlet t:expl_buf_num
+      endif
+  else
+      exec '1wincmd w'
+      Vexplore
+      let t:expl_buf_num = bufnr("%")
+  endif
+endfunction
+map <silent> <C-E> :call ToggleVExplorer()<CR>
+
+" Hit enter in the file browser to open the selected
+" file with :vsplit to the right of the browser.
+let g:netrw_browse_split = 3
+let g:netrw_altv = 1
+
+" Default to tree mode
+let g:netrw_liststyle=3
+" }}}
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -347,11 +387,13 @@ let g:syntastic_jsl_conf = '$HOME/.vim/jsl.conf'
 
 " }}}
 
-" Powerline
+" Powerline {{{
 " let g:Powerline_symbols = 'fancy'
+" }}}
 
-" Mustache
+" Mustache {{{
 let g:mustache_abbreviations = 1
+" }}}
 
 " vim-notes {{{
 if ! isdirectory(expand('~/notes'))
@@ -405,39 +447,69 @@ let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command
 
 " }}}
 
+" CtrlPBuffer {{{
 nnoremap <C-b> :CtrlPBuffer<CR>
+" }}}
 
 " EasyMotion {{{
 let g:EasyMotion_do_mapping = 0
 
-nnoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-onoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
+" Bi-directional find motion
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap s <Plug>(easymotion-s)
 
-nnoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-onoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
+" Turn on case sensitive feature
+let g:EasyMotion_smartcase = 1
+
+"
+" nnoremap <silent> <Leader>f      <Plug>(easymotion-f)
+" onoremap <silent> <Leader>f      <Plug>(easymotion-f)
+" vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
+"
+" nnoremap <silent> <Leader>F      <Plug>(easymotion-F)
+" onoremap <silent> <Leader>F      <Plug>(easymotion-F)
+" vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
 
 " onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
 " onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
 
+" TODO experimentel..
+" Gif config
+" nmap / <Plug>(easymotion-sn)
+" xmap / <Esc><Plug>(easymotion-sn)\v%V
+" omap / <Plug>(easymotion-tn)
+" nnoremap g/ /
+" These `n` & `N` mappings are options. You do not have to map `n` & `N` to EasyMotion.
+" Without these mappings, `n` & `N` works fine. (These mappings just provide
+" different highlight method and have some other features )
+" map  n <Plug>(easymotion-next)
+" map  N <Plug>(easymotion-prev)
+
 " fix colors
-hi link EasyMotionTarget ErrorMsg
-hi link EasyMotionShade  Comment
+" hi link EasyMotionTarget ErrorMsg
+" hi link EasyMotionShade  Comment
 
 " }}}
 
-" jsbeautify
+" jsbeautify {{{
 " autocmd FileType javascript noremap <buffer>  <c-M> :call JsBeautify()<cr>
 " autocmd FileType html noremap <buffer> <c-M> :call HtmlBeautify()<cr>
 " autocmd FileType css noremap <buffer> <c-M> :call CSSBeautify()<cr>
+" }}}
 
-"ACK
+" ACK {{{
 " nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
+" }}}
 
 " if performance down
 " let loaded_matchparen = 1
 " http://vimdoc.sourceforge.net/htmldoc/intro.html#keycodes
+
+" TaskList {{{
+nnoremap <leader>v <Plug>TaskList
+" }}}
+
 " SmartInput {{{
 call smartinput#define_rule({
             \   'at':       '(\%#)',
@@ -491,6 +563,7 @@ let g:mta_filetypes = {
     \ 'jinja' : 1,
     \ 'htmldjango' : 1,
     \ 'ezp' : 1,
+    \ 'twig' : 1,
     \}
 " }}}
 
@@ -499,6 +572,7 @@ let g:mta_filetypes = {
 " character. also when c+space are pressed (maybe change this on keyremap4mac)
 " let g:ycm_key_invoke_completion = '<C-Space>'
 " }}}
+
 " Slime {{{
 " let g:slime_target = "tmux"
 " }}}
@@ -529,54 +603,93 @@ endif
 " let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 " }}}
 
-" Highlight Word {{{
-" https://github.com/sjl/dotfiles/blob/master/vim/vimrc#L1827
+" VDebug {{{
+let g:vdebug_keymap = {
+\    "run" : "<Leader>s",
+\    "run_to_cursor" : "<Down>",
+\    "step_over" : "<Up>",
+\    "step_into" : "<Right>",
+\    "step_out" : "<Left>",
+\    "close" : "q",
+\    "detach" : "x",
+\    "set_breakpoint" : "<Leader>d",
+\    "eval_visual" : "<Leader>e"
+\}
+
+let g:vdebug_options = {
+\    "break_on_open" : 0,
+\    "watch_window_style": 'compact',
+\    "watch_window_height": 40,
+\    "status_window_height": 5
+\}
+" }}}
+
+" pdv {{{
+" let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
+" nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
+" }}}
+
+" ultisnips {{{
+" let g:UltiSnipsExpandTrigger="<leader>J"
+" }}}
+
+" phpDoc {{{
+let g:pdv_cfg_Type = "mixed"
+let g:pdv_cfg_Package = "Web"
+let g:pdv_cfg_Version = "//autogen//"
+let g:pdv_cfg_Author = "Juan Pablo S."
+let g:pdv_cfg_Copyright = "Copyright (c) 2014 All rights reserved."
+let g:pdv_cfg_License = "PHP Version 5.4"
+" }}}
+
+" Unite {{{
+" let g:unite_source_history_yank_enable = 1
+" call unite#filters#matcher_default#use(['matcher_fuzzy'])
+" nnoremap <leader>t :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
+" nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files   -start-insert file<cr>
+" nnoremap <leader>r :<C-u>Unite -no-split -buffer-name=mru     -start-insert file_mru<cr>
+" nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
+" nnoremap <leader>y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
+" nnoremap <leader>e :<C-u>Unite -no-split -buffer-name=buffer  buffer<cr>
 "
-" This mini-plugin provides a few mappings for highlighting words temporarily.
-"
-" Sometimes you're looking at a hairy piece of code and would like a certain
-" word or two to stand out temporarily.  You can search for it, but that only
-" gives you one color of highlighting.  Now you can use <leader>N where N is
-" a number from 1-6 to highlight the current word in a specific color.
+" " Custom mappings for the unite buffer
+" autocmd FileType unite call s:unite_settings()
+" function! s:unite_settings()
+"   " Play nice with supertab
+"   let b:SuperTabDisabled=1
+"   " Enable navigation with control-j and control-k in insert mode
+"   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+"   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+"   imap <silent><buffer><expr> <C-x> unite#do_action('split')
+"   imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+"   imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
+"   nmap <buffer> <ESC> <Plug>(unite_exit)
+" endfunction
+" if executable('ag')
+"   " Use ag in unite grep source.
+"   let g:unite_source_grep_command = 'ag'
+"   let g:unite_source_grep_default_opts =
+"         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+"         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+"   let g:unite_source_grep_recursive_opt = ''
+" endif
+" }}}
 
-function! HiInterestingWord(n)
-    " Save our location.
-    normal! mz
-
-    " Yank the current word into the z register.
-    normal! "zyiw
-
-    " Calculate an arbitrary match ID.  Hopefully nothing else is using it.
-    let mid = 86750 + a:n
-
-    " Clear existing matches, but don't worry if they don't exist.
-    silent! call matchdelete(mid)
-
-    " Construct a literal pattern that has to match at boundaries.
-    let pat = '\V\<' . escape(@z, '\') . '\>'
-
-    " Actually match the words.
-    call matchadd("InterestingWord" . a:n, pat, 1, mid)
-
-    " Move back to our original location.
-    normal! `z
+" php-complete {{{
+" autocmd FileType  php call s:setPhpEnviroment()
+function! s:setPhpEnviroment()
+    setlocal omnifunc=phpcomplete_extended#CompletePHP
+    let g:phpcomplete_index_composer_command = 'composer'
+    " echo getcwd().'/bootstrap/start.php'
+    " TODO
+    " if on laravel project, execute php artisan dump-autoload instead of
+    " composer update. this will also generate autoloads for workbench
+    if phpcomplete_extended#laravel#is_valid_project()
+        " this doesnt work, because there is a validator, wich executes
+        " composer version
+        " let g:phpcomplete_index_composer_command = 'php artisan'
+    endif
 endfunction
-
-" TODO: clear all iteresting words
-nnoremap <silent> <leader>1 :call HiInterestingWord(1)<cr>
-nnoremap <silent> <leader>2 :call HiInterestingWord(2)<cr>
-nnoremap <silent> <leader>3 :call HiInterestingWord(3)<cr>
-nnoremap <silent> <leader>4 :call HiInterestingWord(4)<cr>
-nnoremap <silent> <leader>5 :call HiInterestingWord(5)<cr>
-nnoremap <silent> <leader>6 :call HiInterestingWord(6)<cr>
-
-hi def InterestingWord1 guifg=#000000 ctermfg=16 guibg=#ffa724 ctermbg=214
-hi def InterestingWord2 guifg=#000000 ctermfg=16 guibg=#aeee00 ctermbg=154
-hi def InterestingWord3 guifg=#000000 ctermfg=16 guibg=#8cffba ctermbg=121
-hi def InterestingWord4 guifg=#000000 ctermfg=16 guibg=#b88853 ctermbg=137
-hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
-hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
-
 " }}}
 
 " Maps {{{
@@ -594,7 +707,9 @@ nnoremap gp `[v`]
 nnoremap # *zvzz
 nnoremap g; g;zz
 nnoremap g, g,zz
-nnoremap <c-o> <c-o>zz
+" TODO: jump and pulse..
+nnoremap <c-o> <c-o>:call Pulse()<CR>
+nnoremap <c-i> <c-i>:call Pulse()<CR>
 
 " F<nr>
 " NerdTree
@@ -608,6 +723,8 @@ nnoremap <F5> :GundoToggle<CR>
 nnoremap <silent> <F6> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<Bar>:retab<CR>
 " TODO: when i search for a new entry, than always activate hlseach
 nnoremap <silent> <F7> :set hlsearch!<CR>
+" phpDoc
+nnoremap <buffer> <C-i> :set paste<CR>:call PhpDoc()<CR>:set nopaste<CR><F6>
 " TagBar
 " nmap <F8> :TagbarToggle<CR>
 " toggle syntastic mode
@@ -678,13 +795,68 @@ nnoremap <leader>V V`]
 
 noremap ' `
 
-nnoremap <C-Space> :Pulse<CR>
-
 " }}}
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Languages
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Twig
+autocmd FileType apache set commentstring=#\ %s
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Highlight Word {{{
+" https://github.com/sjl/dotfiles/blob/master/vim/vimrc#L1827
+"
+" This mini-plugin provides a few mappings for highlighting words temporarily.
+"
+" Sometimes you're looking at a hairy piece of code and would like a certain
+" word or two to stand out temporarily.  You can search for it, but that only
+" gives you one color of highlighting.  Now you can use <leader>N where N is
+" a number from 1-6 to highlight the current word in a specific color.
+
+function! HiInterestingWord(n)
+    " Save our location.
+    normal! mz
+
+    " Yank the current word into the z register.
+    normal! "zyiw
+
+    " Calculate an arbitrary match ID.  Hopefully nothing else is using it.
+    let mid = 86750 + a:n
+
+    " Clear existing matches, but don't worry if they don't exist.
+    silent! call matchdelete(mid)
+
+    " Construct a literal pattern that has to match at boundaries.
+    let pat = '\V\<' . escape(@z, '\') . '\>'
+
+    " Actually match the words.
+    call matchadd("InterestingWord" . a:n, pat, 1, mid)
+
+    " Move back to our original location.
+    normal! `z
+endfunction
+
+" TODO: clear all iteresting words
+nnoremap <silent> <leader>1 :call HiInterestingWord(1)<cr>
+nnoremap <silent> <leader>2 :call HiInterestingWord(2)<cr>
+nnoremap <silent> <leader>3 :call HiInterestingWord(3)<cr>
+nnoremap <silent> <leader>4 :call HiInterestingWord(4)<cr>
+nnoremap <silent> <leader>5 :call HiInterestingWord(5)<cr>
+nnoremap <silent> <leader>6 :call HiInterestingWord(6)<cr>
+
+hi def InterestingWord1 guifg=#000000 ctermfg=16 guibg=#ffa724 ctermbg=214
+hi def InterestingWord2 guifg=#000000 ctermfg=16 guibg=#aeee00 ctermbg=154
+hi def InterestingWord3 guifg=#000000 ctermfg=16 guibg=#8cffba ctermbg=121
+hi def InterestingWord4 guifg=#000000 ctermfg=16 guibg=#b88853 ctermbg=137
+hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
+hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
+
+" }}}
+
 " for debbug
 function! SyntaxItem()
   return synIDattr(synID(line("."),col("."),1),"name")
@@ -750,7 +922,8 @@ function! s:NextTextObject(motion, dir)
 endfunction
 
 " }}}
-" Numbers {{{
+
+" Number Motion {{{
 
 " Motion for numbers.  Great for CSS.  Lets you do things like this:
 "
@@ -782,10 +955,10 @@ function! s:NumberTextObject(whole)
 endfunction
 
 " }}}
-"
+
 " Pulse Line {{{
 
-function! s:Pulse() " {{{
+function! Pulse() " {{{
     let current_window = winnr()
     windo set nocursorline
     execute current_window . 'wincmd w'
@@ -818,7 +991,6 @@ function! s:Pulse() " {{{
     " TODO: check what was the value before..
     windo set nocursorline
 endfunction " }}}
-command! -nargs=0 Pulse call s:Pulse()
 
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -862,7 +1034,7 @@ augroup END
 "                 \     setlocal statusline+=\ \[Compiler\ Messages\] |
 "                 \     setlocal statusline+=%=%2*\ %<%P |
 "                 \ endif
-" 
+"
 "     fun! FixMiniBufExplorerTitle()
 "         if "-MiniBufExplorer-" == bufname("%")
 "             setlocal statusline=%2*%-3.3n%0*
@@ -870,7 +1042,7 @@ augroup END
 "             setlocal statusline+=%=%2*\ %<%P
 "         endif
 "     endfun
-" 
+"
 "     au BufWinEnter *
 "                 \ let oldwinnr=winnr() |
 "                 \ windo call FixMiniBufExplorerTitle() |
@@ -935,7 +1107,7 @@ autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+" autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 " autocmd FileType c set omnifunc=ccomplete#Complete
 "
 au BufRead,BufNewFile *.tpl  set filetype=ezp

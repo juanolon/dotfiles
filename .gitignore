@@ -4,3 +4,4 @@
 *.swo
 vim/bundle
 !vim/bundle/vundle/
+vim/view/

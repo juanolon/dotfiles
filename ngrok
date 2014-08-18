@@ -1,0 +1,16 @@
+auth_token: s6oqOGh5OGCCogottri-
+tunnels:
+  prinoth:
+    subdomain: prinoth
+    proto:
+      https: "80"
+  athesia:
+    subdomain: athesia
+    inspect_addr: "0.0.0.0:8888"
+    proto:
+      https: "1010"
+  giesswein:
+    subdomain: www.giesswein
+    inspect_addr: "0.0.0.0:1010"
+    proto:
+      http: "8080"

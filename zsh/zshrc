@@ -3,8 +3,8 @@ export LC_ALL=en_US.UTF-8
 export TERM=screen-256color
 
 # CLI EDITING {{{
-bindkey "^j" history-search-forward ## down arrow for fwd-history-search
-bindkey "^k" history-search-backward ## up arrow for back-history-search
+bindkey "^j" history-beginning-search-forward ## down arrow for fwd-history-search
+bindkey "^k" history-beginning-search-backward ## up arrow for back-history-search
 bindkey "^w" forward-word ## go forward one word
 bindkey "^b" backward-word ## go back one word
 bindkey "^d" backward-kill-word
@@ -30,28 +30,41 @@ limit -s
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # PATH {{{
-path=($path /bin /usr/bin /usr/local/bin $HOME/.bin)
+
+export GOPATH="$HOME/gocode"
+
+php55_path=`/usr/local/bin/brew --prefix josegonzalez/php/php55`
+path=''
+path=($path /usr/local/bin $HOME/.bin)
+path=($path /bin /usr/bin /usr/sbin /sbin)
 path=($path $HOME/.rvm/bin)
 path=($path $HOME/.android/tools)
 path=($path /usr/local/share/npm/bin/)
+path=($path /usr/local/opt/coreutils/libexec/gnubin)
+path=($path $php55_path/bin)
+path=($path /usr/local/opt/go/libexec/bin)
+path=($path $HOME/.composer/vendor/bin)
+path=($path $GOPATH/bin)
+path=($path $HOME/.depot_tools)
+export PATH="$path":$PATH
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
+export JAVA_HOME=`/usr/libexec/java_home`
 
 cdpath=(~ ..) ## on cd command offer dirs in home and one dir up.
 
-NODE_PATH="/usr/local/share/npm/lib/node_modules" # from bash..
-
-## set manpath
-# doesnt work alredy?
-# if [[ "$VENDOR" == "apple" ]]; then
-#     manpath=(/opt/local/share/man) ## EDIT ##
-# fi
+NODE_PATH="/usr/local/lib/node_modules" # from bash..
 
 manpath=($manpath /usr/share/man) ## EDIT ##
+manpath=($manpath /usr/local/opt/coreutils/libexec/gnuman) ## EDIT ##
 
 fpath=(/usr/local/share/zsh-completions $fpath)
 
 ## remove duplicate entries from path,cdpath,manpath & fpath
 typeset -gU path cdpath manpath fpath #TODO
 # }}}
+
+plugins=(git ssh-agent )
+source /Users/juanolon/.rvm/scripts/rvm
 
 # HISTORY {{{
 ## The file to save the history in when an interactive shell exits.
@@ -84,7 +97,7 @@ setopt auto_pushd
 (( ${+PAGER} )) || export PAGER=`which less`
 (( ${+LESSCHARSET} )) || export LESSCHARSET='utf-8' ## charset for pager
 (( ${+LESSOPEN} )) || export LESSOPEN='|lesspipe %s' # TODO what does lesspipe? now works..
-(( ${+CC} )) || export CC='gcc' ## or egcs or whatever
+# (( ${+CC} )) || export CC='gcc' ## or egcs or whatever
 
 ## variables for BitchX (irc client)
 # TODO check if weechat use  the same variables
@@ -195,8 +208,8 @@ SPROMPT='zsh: correct '%R' to '%r' ? ([Y]es/[N]o/[E]dit/[A]bort) '
 # ALIASES {{{
 # alias c='clear'
 alias h='history'
-alias vim='reattach-to-user-namespace /usr/local/Cellar/vim/7.4.052/bin/vim'
-alias v='f -t -e vim -b viminfo'
+alias vim='reattach-to-user-namespace /usr/local/Cellar/vim/HEAD/bin/vim'
+# alias v='f -t -e vim -b viminfo'
 alias ag='ag --color-line-number=91 --color-match=31 --color-path="34;103" -S'
 alias agg='ag -g'
 alias mv='nocorrect mv -i'
@@ -225,7 +238,7 @@ alias ....='cd ../../..'
 alias sshv='bcvi --wrap-ssh -- '
 if [[ -n $TMUX ]]; then
     alias nvim='vim'
-    vim() { tmux-vim "$@"; }
+    v() { VIM_BIN='reattach-to-user-namespace vim' tvim "$@"; }
     alias pbcopy='reattach-to-user-namespace pbcopy'
     alias pbpaste='reattach-to-user-namespace pbpaste'
 fi
@@ -276,6 +289,11 @@ alias -g N='&>/dev/null&'
 #  -- - everything after this is an argument, even if it looks like an option
 
 alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
+
+# work
+alias pushgdb='cd ~/code/holz/giesswein/sql && mysqldump -u root -p giesswein > giesswein.sql && gzip giesswein.sql && cd ../public && rake pushdb'
+alias pullgdb='cd ~/code/holz/giesswein/public && rake fetchdb && gunzip ../sql/giesswein.sql.gz && mysql -u root -p giesswein < ../sql/giesswein.sql && gzip ../sql/giesswein.sql'
+
 # }}}
 
 # LESS {{{
