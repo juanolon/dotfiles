@@ -16,7 +16,6 @@ filetype off
 
 " initialize vundle
 set rtp+=~/dotfiles/vim/bundle/vundle/
-" set rtp+=~/dotfiles/vim/bundle/powerline/powerline/bindings/vim
 call vundle#rc()
 
 " Vundle {{{
@@ -26,19 +25,17 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 " ##### UI
-Bundle 'chriskempson/base16-vim'
-Bundle 'bling/vim-airline'
+Bundle 'juanolon/mod-base16-railscasts'
+Bundle 'itchyny/lightline.vim'
 Bundle 'kien/ctrlp.vim'
-" ToDo: configure signature
 Bundle 'kshenoy/vim-signature'
 Bundle 'Shougo/neocomplete.vim'
-" Bundle 'airblade/vim-gitgutter'
-Bundle 'ivyl/vim-bling'
+Bundle 'whatyouhide/vim-lengthmatters'
+" Bundle 'haya14busa/incsearch.vim'
 
 " ##### Helpers
 Bundle 'tpope/vim-surround'
 Bundle 'epmatsw/ag.vim'
-" ToDo: check tcomment syntax
 Bundle 'tomtom/tcomment_vim'
 Bundle 'kana/vim-smartinput'
 Bundle 'vim-scripts/matchit.zip'
@@ -67,20 +64,27 @@ Bundle 'beyondwords/vim-twig'
 Bundle 'groenewege/vim-less'
 Bundle 'tpope/vim-markdown'
 Bundle 'suan/vim-instant-markdown'
+" syntax and indentantion
 Bundle 'pangloss/vim-javascript'
+Bundle 'myhere/vim-nodejs-complete'
 " Bundle 'maksimr/vim-jsbeautify'
 Bundle 'fatih/vim-go'
-" Bundle 'm2mdas/phpcomplete-extended'
-" Bundle 'm2mdas/phpcomplete-extended-laravel'
+" required for phpcomplete_extended
+Bundle 'Shougo/vimproc'
+Bundle 'm2mdas/phpcomplete-extended'
+Bundle 'm2mdas/phpcomplete-extended-laravel'
 " Bundle 'm2mdas/phpcomplete-extended-symfony'
-Bundle 'BlackIkeEagle/vdebug'
+" Bundle 'joonty/vdebug'
 Bundle 'drwX/php-doc.vim'
+Bundle 'stephpy/vim-php-cs-fixer'
+Bundle 'honza/dockerfile.vim'
+
+Bundle 'brookhong/DBGPavim'
 
 
 " Bundle 'majutsushi/tagbar'
 " Bundle 'Valloric/YouCompleteMe'
 " Bundle 'zweifisch/pipe2eval'
-" Bundle 'Shougo/vimproc'
 " Bundle 'Shougo/unite.vim'
 
 " }}}
@@ -103,14 +107,13 @@ set gdefault "the /g flag on :s substitutions by default
 set synmaxcol=800 "don't highlight lines longer than 800
 
 set encoding=utf-8 " Necessary to show unicode glyphs
-" let mapleader = ","
 set tags=./tags;/
 
 " colorscheme wombat " alternative: maloki, ir_black
 " colorscheme wombat256mod
-" let base16colorspace=256
-colorscheme base16-railscasts
+colorscheme mod-base16-railscasts
 set background=dark
+" set textwidth=
 
 " }}}
 
@@ -138,8 +141,6 @@ set backupext=.vimbackup
 set directory=~/.vimtmp
 " }}}
 
-"autocmd! bufwritepost vimrc source ~/.vimrc "when vimrc is edited, reload it
-
 " Fixes {{{
 " close quick fix window, when leaving file
 aug QFClose
@@ -165,14 +166,10 @@ endif
 
 " UI {{{
 set guioptions=acr
-" set cursorline "hightlight the current line/column
-" set cursorcolumn
-" set nocursorline nocursorcolumn
 
 set laststatus=2 "always show the status bar
 set lazyredraw "do not redraw while running macros
 
-" set selectmode=mouse "select when using the mouse
 set cmdheight=2 "set the commandheight
 set hlsearch "turn if highlight for searched expressions
 set incsearch "do incremental searches
@@ -198,21 +195,13 @@ set number
 
 set showcmd "show partial commands?
 set magic "magic for regular expressions
-" set guifont=Mensch\ Regular\ for\ Powerline:h11
-" set guifont=Inconsolata-dz_for_Powerline:h11
 set anti enc=utf-8 gfn=Source_Code_Pro:h13,Inconsolata-dz_for_Powerline:h11,Menlo:h11,Monaco:h11
 
 "set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
 
 "show characters
 set list
-" set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
 set listchars=tab:>\ ,eol:¬,extends:>,precedes:<
-" set fillchars=diff:-,vert:| " this are acutally the default settings..
-
-" Show ↪ at the beginning of wrapped lines
-" let showbreak = nr2char(8618)
-
 " }}}
 
 " Folding {{{
@@ -284,7 +273,7 @@ set preserveindent "save as much indent structure as possible
 
 " }}}
 
-" NETRW {{{
+" NETRW {{{ disabled
 " Toggle Vexplore with Ctrl-E
 function! ToggleVExplorer()
   if exists("t:expl_buf_num")
@@ -304,7 +293,7 @@ function! ToggleVExplorer()
       let t:expl_buf_num = bufnr("%")
   endif
 endfunction
-map <silent> <C-E> :call ToggleVExplorer()<CR>
+" map <silent> <C-E> :call ToggleVExplorer()<CR>
 
 " Hit enter in the file browser to open the selected
 " file with :vsplit to the right of the browser.
@@ -323,76 +312,99 @@ let g:netrw_liststyle=3
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1 " open error-windows
 let g:syntastic_auto_jump=0 " jump to the first error
-" let g:syntastic_disabled_filetypes = ['html']
 let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'active_filetypes': [ 'php', 'JSON', 'sh', 'css', 'xml', 'twig' ],
                            \ 'passive_filetypes': [ 'html', 'javascript' ] }
 let g:syntastic_jsl_conf = '$HOME/.vim/jsl.conf'
-
 " }}}
 
-" TAGBAR {{{
-" let g:tagbar_type_scala = {
-"     \ 'ctagstype' : 'Scala',
-"     \ 'kinds'     : [
-"         \ 'p:packages:1',
-"         \ 'V:values',
-"         \ 'v:variables',
-"         \ 'T:types',
-"         \ 't:traits',
-"         \ 'o:objects',
-"         \ 'a:aclasses',
-"         \ 'c:classes',
-"         \ 'r:cclasses',
-"         \ 'm:methods'
-"     \ ]
-" \ }
-" let g:tagbar_type_javascript = {
-"     \ 'ctagsbin' : '/usr/local/share/npm/bin/jsctags'
-" \ }
-" https://github.com/techlivezheng/tagbar-phpctags
-" let g:tagbar_type_php = {
-"     \ 'ctagsbin'  : '',
-"     \ 'kinds'     : [
-"         \ 'd:Constants:0',
-"         \ 'v:Variables:0',
-"         \ 'f:Functions:0',
-"         \ 'i:Interfaces:0',
-"         \ 'c:Classes:0',
-"         \ 'p:Properties:0',
-"         \ 'm:Methods:0'
-"     \ ],
-"     \ 'sro'        : '::',
-"     \ 'kind2scope' : {
-"         \ 'c' : 'class',
-"         \ 'm' : 'method',
-"         \ 'f' : 'function',
-"         \ 'i' : 'interface'
-"     \ },
-"     \ 'scope2kind' : {
-"         \ 'class'     : 'c',
-"         \ 'method'    : 'm',
-"         \ 'function'  : 'f',
-"         \ 'interface' : 'i'
-"     \ }
-" \ }
-" let g:tagbar_type_markdown = {
-"     \ 'ctagstype' : 'markdown',
-"     \ 'kinds' : [
-"         \ 'h:Heading_L1',
-"         \ 'i:Heading_L2',
-"         \ 'k:Heading_L3'
-"     \ ]
-" \ }
+" lightline {{{
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'branch', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'branch': 'MyBranch',
+      \   'readonly': 'MyReadonly',
+      \   'modified': 'MyModified',
+      \   'filename': 'MyFilename',
+      \   'mode': 'MyMode',
+      \ },
+      \ 'component_expand': {
+      \   'syntastic': 'SyntasticStatuslineFlag',
+      \ },
+      \ 'component_type': {
+      \   'syntastic': 'error',
+      \ },
+      \ 'separator': { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '|', 'right': '|' }
+      \ }
 
-" }}}
+function! MyBranch()
+    if &ft !~? 'vimfiler\|gundo\|notes\|vundle'
+        let branch = system("git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* //'")
+        if branch != ''
+            return substitute(branch, '\n', '', 'g')
+        endif
+    endif
+    return ''
+endfunction
+function! MyModified()
+  return &ft =~ 'help\|gundo\|vundle' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+function! MyReadonly()
+  return &ft !~? 'help\|gundo\|vundle' && &readonly ? 'RO' : ''
+endfunction
+function! MyFilename()
+  let fname = expand('%:t')
+  return fname == 'ControlP' ? g:lightline.ctrlp_item :
+        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+        \ &ft == 'nerdtree' ? '' :
+        \ &ft == 'vundle' ? '' :
+        \ ('' != fname ? fname : '[No Name]')
+endfunction
+function! MyMode()
+  let fname = expand('%:t')
+  return fname == '__Tagbar__' ? 'Tagbar' :
+        \ fname == 'ControlP' ? 'CtrlP' :
+        \ fname == '__Gundo__' ? 'Gundo' :
+        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+        \ fname == '[Vundle] Installer' ? 'Vundle Installer' :
+        \ fname =~ 'NERD_tree' ? 'NERDTree' :
+        \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+function! CtrlPMark()
+  if expand('%:t') =~ 'ControlP'
+    call lightline#link('iR'[g:lightline.ctrlp_regex])
+    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+          \ , g:lightline.ctrlp_next], 0)
+  else
+    return ''
+  endif
+endfunction
+let g:ctrlp_status_func = {
+  \ 'main': 'CtrlPStatusFunc_1',
+  \ 'prog': 'CtrlPStatusFunc_2',
+  \ }
+function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+  let g:lightline.ctrlp_regex = a:regex
+  let g:lightline.ctrlp_prev = a:prev
+  let g:lightline.ctrlp_item = a:item
+  let g:lightline.ctrlp_next = a:next
+  return lightline#statusline(0)
+endfunction
 
-" Powerline {{{
-" let g:Powerline_symbols = 'fancy'
-" }}}
+function! CtrlPStatusFunc_2(str)
+  return lightline#statusline(0)
+endfunction
 
-" Mustache {{{
-let g:mustache_abbreviations = 1
+augroup AutoSyntastic
+  autocmd!
+  autocmd BufWritePost g:syntastic_mode_map['active_filetypes'] call lightline#update()
+augroup END
 " }}}
 
 " vim-notes {{{
@@ -401,16 +413,6 @@ if ! isdirectory(expand('~/notes'))
 endif
 let g:notes_directories = [ '~/notes' ]
 let g:notes_title_sync = 'change_title' " if file name or first line is changed, this update the first line
-
-let g:miniBufExplUseSingleClick = 1 "open buffer with one click
-let g:miniBufExplorerMoreThanOne = 0 "always open bufexplorer
-let g:miniBufExplCheckDupeBufs = 0 " disable duplicate buffer
-let g:miniBufExplModSelTarget = 1
-let g:miniBufExplMapCTabSwitchBufs = 1 "use <C-TAB> and <C-S-TAB> to switch between buffers
-" let g:miniBufExplMapWindowNavVim = 1 "control+[hjkl] to move between buffers
-let g:miniBufExplTabWrap = 1 " make tabs show complete (no broken on two lines)
-autocmd BufRead,BufNew :call UMiniBufExplorer "update explorer without navigating
-
 " }}}
 
 " CtrlP {{{
@@ -502,12 +504,24 @@ let g:EasyMotion_smartcase = 1
 " nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 " }}}
 
+" vim-nodejs-complete {{{
+let g:nodejs_complete_config = {
+\  'js_compl_fn': 'jscomplete#CompleteJS',
+\  'max_node_compl_len': 15
+\}
+" }}}
+
+" vim-lengthmatters {{{
+let g:lengthmatters_start_at_column = 120
+" }}}
 " if performance down
 " let loaded_matchparen = 1
 " http://vimdoc.sourceforge.net/htmldoc/intro.html#keycodes
 
 " TaskList {{{
-nnoremap <leader>v <Plug>TaskList
+nnoremap <leader>t <Plug>TaskList
+let g:tlWindowPosition = 1
+let g:tlTokenList = ['FIXME', 'TODO', 'XXX']
 " }}}
 
 " SmartInput {{{
@@ -573,15 +587,6 @@ let g:mta_filetypes = {
 " let g:ycm_key_invoke_completion = '<C-Space>'
 " }}}
 
-" Slime {{{
-" let g:slime_target = "tmux"
-" }}}
-
-" bling {{{
-let g:bling_time = 150
-let g:bling_count = 1
-" }}}
-
 " neocomplete {{{
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
@@ -604,36 +609,76 @@ endif
 " }}}
 
 " VDebug {{{
-let g:vdebug_keymap = {
-\    "run" : "<Leader>s",
-\    "run_to_cursor" : "<Down>",
-\    "step_over" : "<Up>",
-\    "step_into" : "<Right>",
-\    "step_out" : "<Left>",
-\    "close" : "q",
-\    "detach" : "x",
-\    "set_breakpoint" : "<Leader>d",
-\    "eval_visual" : "<Leader>e"
-\}
-
-let g:vdebug_options = {
-\    "break_on_open" : 0,
-\    "watch_window_style": 'compact',
-\    "watch_window_height": 40,
-\    "status_window_height": 5
-\}
+" let g:vdebug_keymap = {
+" \    "run" : "<Leader>s",
+" \    "run_to_cursor" : "<Down>",
+" \    "step_over" : "<Up>",
+" \    "step_into" : "<Right>",
+" \    "step_out" : "<Left>",
+" \    "close" : "q",
+" \    "detach" : "x",
+" \    "set_breakpoint" : "<Leader>d",
+" \    "eval_visual" : "<Leader>e"
+" \}
+"
+" let g:vdebug_options = {
+" \    "break_on_open" : 0,
+" \    "watch_window_style": 'compact',
+" \    "watch_window_height": 40,
+" \    "status_window_height": 5
+" \}
 " }}}
 
-" pdv {{{
-" let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
-" nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
+" vim-debug {{{
+" disable default mappings
+" let g:vim_debug_disable_mappings = 1
+" autocmd FileType php map <buffer> <Up> :Dbg over<CR>
+" autocmd FileType php map <buffer> <Right> :Dbg into<CR>
+" autocmd FileType php map <buffer> <Left> :Dbg out<CR>
+" autocmd FileType php map <buffer> <Down> :Dbg here<CR>
+" autocmd FileType php map <buffer> <Leader>d :Dbg break<CR>
+" autocmd FileType php map <buffer> <F10> :Dbg watch<CR>
+" autocmd FileType php map <buffer> <F11> :Dbg down<CR>
+" autocmd FileType php map <buffer> <F12> :Dbg up<CR>
+" }}}
+"
+" DBGPavim {{{
+let g:dbgPavimPort = 9000
+let g:dbgPavimBreakAtEntry = 0
+
+" <F5>      => start debugger backend
+" <F6>      => stop debugger backend
+" <F8>      => toggle dbgPavimBreakAtEntry, when g:dbgPavimBreakAtEntry=0, debugger backend breaks only at breakpoints.
+" <F10>     => toggle breakpoint at current line
+" <F1>      => toggle help window
+" <F2>      => step into
+" <F3>      => step over
+" <F4>      => step out
+" <F5>      => start debugging / run
+" <F6>      => stop debugging
+" <F7>      => evalute expression and display result. cursor is automatically move to watch window. type line and just press `Enter`.
+" <F9>      => toggle layout
+" <F11>     => shows all variables
+" <F12>     => shows variable on current cursor
+let g:dbgPavimKeyQuit = '<Leader>q' " <F6>
+let g:dbgPavimKeyRun = '<Leader>s' " <F5>
+let g:dbgPavimKeyStepOver = '<Up>' " <F3>
+let g:dbgPavimKeyStepInto = '<Right>' " <F2>
+let g:dbgPavimKeyStepOut = '<Left>' " <F4>
+let g:dbgPavimKeyPropertyGet = '<Leader>s' " <F12> - show variable under the cursor
+let g:dbgPavimKeyContextGet = '<Leader>a' " show all variables
+let g:dbgPavimKeyToggleBp = '<Leader>d'
+let g:dbgPavimKeyToggleBae = '<nop>'
+let g:dbgPavimKeyRelayout = '<Leader><Space>'
 " }}}
 
-" ultisnips {{{
-" let g:UltiSnipsExpandTrigger="<leader>J"
+" GoldenView {{{
+let g:goldenview__enable_default_mapping = 0
+nmap <silent> <leader><C-l> <Plug>GoldenViewSplit
 " }}}
 
 " phpDoc {{{
+" TODO working?
 let g:pdv_cfg_Type = "mixed"
 let g:pdv_cfg_Package = "Web"
 let g:pdv_cfg_Version = "//autogen//"
@@ -642,79 +687,22 @@ let g:pdv_cfg_Copyright = "Copyright (c) 2014 All rights reserved."
 let g:pdv_cfg_License = "PHP Version 5.4"
 " }}}
 
-" Unite {{{
-" let g:unite_source_history_yank_enable = 1
-" call unite#filters#matcher_default#use(['matcher_fuzzy'])
-" nnoremap <leader>t :<C-u>Unite -no-split -buffer-name=files   -start-insert file_rec/async:!<cr>
-" nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files   -start-insert file<cr>
-" nnoremap <leader>r :<C-u>Unite -no-split -buffer-name=mru     -start-insert file_mru<cr>
-" nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
-" nnoremap <leader>y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
-" nnoremap <leader>e :<C-u>Unite -no-split -buffer-name=buffer  buffer<cr>
-"
-" " Custom mappings for the unite buffer
-" autocmd FileType unite call s:unite_settings()
-" function! s:unite_settings()
-"   " Play nice with supertab
-"   let b:SuperTabDisabled=1
-"   " Enable navigation with control-j and control-k in insert mode
-"   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-"   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-"   imap <silent><buffer><expr> <C-x> unite#do_action('split')
-"   imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-"   imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
-"   nmap <buffer> <ESC> <Plug>(unite_exit)
-" endfunction
-" if executable('ag')
-"   " Use ag in unite grep source.
-"   let g:unite_source_grep_command = 'ag'
-"   let g:unite_source_grep_default_opts =
-"         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
-"         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-"   let g:unite_source_grep_recursive_opt = ''
-" endif
-" }}}
-
 " php-complete {{{
-" autocmd FileType  php call s:setPhpEnviroment()
-function! s:setPhpEnviroment()
-    setlocal omnifunc=phpcomplete_extended#CompletePHP
-    let g:phpcomplete_index_composer_command = 'composer'
-    " echo getcwd().'/bootstrap/start.php'
-    " TODO
-    " if on laravel project, execute php artisan dump-autoload instead of
-    " composer update. this will also generate autoloads for workbench
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType php call s:checkPHPSettings()
+function! s:checkPHPSettings()
     if phpcomplete_extended#laravel#is_valid_project()
-        " this doesnt work, because there is a validator, wich executes
-        " composer version
-        " let g:phpcomplete_index_composer_command = 'php artisan'
+        setlocal omnifunc=phpcomplete_extended#CompletePHP
+        let g:phpcomplete_index_composer_command = 'composer'
+    else
+        call phpcomplete_extended#disable()
     endif
 endfunction
 " }}}
 
 " Maps {{{
-" exits insert mode with jj
-inoremap jj <Esc>
-cnoremap <expr> j getcmdline()[getcmdpos() - 2] ==# 'j' ? "\<BS>\<ESC>" : 'j'
-
-nnoremap <C-n> :set invnumber<CR>
-
 nnoremap gp `[v`]
 
-"nnoremap n nzvzz
-"nnoremap N Nzvzz
-" nnoremap * *zvzz
-nnoremap # *zvzz
-nnoremap g; g;zz
-nnoremap g, g,zz
-" TODO: jump and pulse..
-nnoremap <c-o> <c-o>:call Pulse()<CR>
-nnoremap <c-i> <c-i>:call Pulse()<CR>
-
-" F<nr>
-" NerdTree
-noremap  <F2> :NERDTreeToggle<cr>
-inoremap <F2> <esc>:NERDTreeToggle<cr>
 " toggle paste
 nnoremap <F3> :set paste!<cr>
 " gundo
@@ -724,7 +712,7 @@ nnoremap <silent> <F6> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<Bar>
 " TODO: when i search for a new entry, than always activate hlseach
 nnoremap <silent> <F7> :set hlsearch!<CR>
 " phpDoc
-nnoremap <buffer> <C-i> :set paste<CR>:call PhpDoc()<CR>:set nopaste<CR><F6>
+" nnoremap <buffer> <C-i> :set paste<CR>:call PhpDoc()<CR>:set nopaste<CR><F6>
 " TagBar
 " nmap <F8> :TagbarToggle<CR>
 " toggle syntastic mode
@@ -753,10 +741,10 @@ cnoremap <c-h> 4h
 cnoremap <c-l> 4l
 
 " disable arrows
-noremap <Up> <nop>
-noremap <Down> <nop>
-noremap <Left> <nop>
-noremap <Right> <nop>
+" noremap <Up> <nop>
+" noremap <Down> <nop>
+" noremap <Left> <nop>
+" noremap <Right> <nop>
 
 " start/end of line
 nnoremap <C-h> ^
@@ -766,12 +754,6 @@ vnoremap <C-l> $
 
 " split lines under the cursor (opposite of J)
 map K i<CR><Esc>g;
-
-" Ctrl-j/k deletes blank line below/above, and Alt-j/k inserts.
-"nnoremap <silent> <C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
-"nnoremap <silent> <C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
-nnoremap <silent> ∆ :set paste<CR>m`o<Esc>``:set nopaste<CR>
-nnoremap <silent> ˚ :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 " Delete a character with the black hole register.
 nnoremap X  "_X
@@ -783,6 +765,7 @@ cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
+cnoremap <C-d> <C-w>
 
 " Fix linewise visual selection of various text objects
 nnoremap VV V
@@ -791,10 +774,10 @@ nnoremap Vat vatV
 nnoremap Vab vabV
 nnoremap VaB vaBV
 
-nnoremap <leader>V V`]
-
 noremap ' `
 
+autocmd FileType javascript nnoremap <Leader>js :nbs<CR>
+autocmd FileType javascript nnoremap <Leader>jc :nbs<CR>
 " }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -956,43 +939,6 @@ endfunction
 
 " }}}
 
-" Pulse Line {{{
-
-function! Pulse() " {{{
-    let current_window = winnr()
-    windo set nocursorline
-    execute current_window . 'wincmd w'
-    setlocal cursorline
-
-    redir => old_hi
-        silent execute 'hi CursorLine'
-    redir END
-    let old_hi = split(old_hi, '\n')[0]
-    let old_hi = substitute(old_hi, 'xxx', '', '')
-
-    let steps = 9
-    let width = 1
-    let start = width
-    let end = steps * width
-    let color = 233
-
-    for i in range(start, end, width)
-        execute "hi CursorLine ctermbg=" . (color + i)
-        redraw
-        sleep 6m
-    endfor
-    for i in range(end, start, -1 * width)
-        execute "hi CursorLine ctermbg=" . (color + i)
-        redraw
-        sleep 6m
-    endfor
-
-    execute 'hi ' . old_hi
-    " TODO: check what was the value before..
-    windo set nocursorline
-endfunction " }}}
-
-" }}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1023,31 +969,6 @@ augroup WhitespaceMatch
     autocmd BufWinLeave * call clearmatches()
 augroup END
 
-
-"set custom statusline for special windows
-"http://dev.gentoo.org/~bass/configs/vimrc.html
-"still using powerline?
-" if has("autocmd")
-"     au FileType qf
-"                 \ if &buftype == "quickfix" |
-"                 \     setlocal statusline=%2*%-3.3n%0* |
-"                 \     setlocal statusline+=\ \[Compiler\ Messages\] |
-"                 \     setlocal statusline+=%=%2*\ %<%P |
-"                 \ endif
-"
-"     fun! FixMiniBufExplorerTitle()
-"         if "-MiniBufExplorer-" == bufname("%")
-"             setlocal statusline=%2*%-3.3n%0*
-"             setlocal statusline+=\[Buffers\]
-"             setlocal statusline+=%=%2*\ %<%P
-"         endif
-"     endfun
-"
-"     au BufWinEnter *
-"                 \ let oldwinnr=winnr() |
-"                 \ windo call FixMiniBufExplorerTitle() |
-"                 \ exec oldwinnr . " wincmd w"
-" endif
 
 " Make sure Vim returns to the same line when you reopen a file.
 " Thanks, Amit
@@ -1094,12 +1015,6 @@ augroup ft_markdown
     setlocal spell spelllang=en_us
 augroup END
 " }}}
-
-" augroup cline
-"     au!
-"     au WinLeave,InsertEnter * set nocursorline nocursorcolumn
-"     au WinEnter,InsertLeave * set cursorline cursorcolumn
-" augroup END
 
 "activate omnifunc: strg-x o
 autocmd FileType python set omnifunc=pythoncomplete#Complete
