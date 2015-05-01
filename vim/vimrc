@@ -15,87 +15,81 @@ set noexrc
 filetype off
 
 " initialize vundle
-set rtp+=~/dotfiles/vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
 
 " Vundle {{{
-
+call vundle#begin()
 " let Vundle manage Vundle
-" required!
-Bundle 'gmarik/vundle'
+Plugin 'gmarik/Vundle.vim'
 
 " ##### UI
-Bundle 'juanolon/mod-base16-railscasts'
-Bundle 'itchyny/lightline.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'kshenoy/vim-signature'
-Bundle 'Shougo/neocomplete.vim'
-Bundle 'whatyouhide/vim-lengthmatters'
-" Bundle 'haya14busa/incsearch.vim'
+Plugin 'juanolon/mod-base16-railscasts'
+Plugin 'itchyny/lightline.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
+Plugin 'kshenoy/vim-signature'
+Plugin 'Valloric/MatchTagAlways'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'whatyouhide/vim-lengthmatters'
 
 " ##### Helpers
-Bundle 'tpope/vim-surround'
-Bundle 'epmatsw/ag.vim'
-Bundle 'tomtom/tcomment_vim'
-Bundle 'kana/vim-smartinput'
-Bundle 'vim-scripts/matchit.zip'
-Bundle 'scrooloose/syntastic'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'godlygeek/tabular'
-Bundle 'regedarek/ZoomWin'
-Bundle 'zhaocai/GoldenView.Vim'
-Bundle 'tpope/vim-repeat'
+Plugin 'tpope/vim-surround'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'vim-scripts/matchit.zip'
+Plugin 'scrooloose/syntastic'
+Plugin 'justinmk/vim-sneak'
+Plugin 'godlygeek/tabular'
+Plugin 'zhaocai/GoldenView.Vim'
+Plugin 'tpope/vim-repeat'
+Plugin 'airblade/vim-rooter'
+Plugin 'goldfeld/vim-seek'
+Plugin 'jiangmiao/auto-pairs'
 
 " ##### Tools
 " required for vim-notes
-Bundle 'xolox/vim-misc'
-Bundle 'xolox/vim-notes'
-Bundle 'sjl/splice.vim'
-Bundle 'sjl/gundo.vim'
-Bundle 'vim-scripts/TaskList.vim'
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-notes'
+Plugin 'sjl/splice.vim'
+Plugin 'sjl/gundo.vim'
+Plugin 'vim-scripts/TaskList.vim'
 " ToDo: configure nerdtree
-Bundle 'scrooloose/nerdtree'
-Bundle 'tpope/vim-vinegar'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-vinegar'
+Plugin 'junegunn/vim-peekaboo'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
 " ##### FileTypes
-Bundle 'othree/html5.vim'
-Bundle 'Valloric/MatchTagAlways'
-Bundle 'beyondwords/vim-twig'
-Bundle 'groenewege/vim-less'
-Bundle 'tpope/vim-markdown'
-Bundle 'suan/vim-instant-markdown'
+Plugin 'othree/html5.vim'
+Plugin 'beyondwords/vim-twig'
+Plugin 'groenewege/vim-less'
+Plugin 'tpope/vim-markdown'
 " syntax and indentantion
-Bundle 'pangloss/vim-javascript'
-Bundle 'myhere/vim-nodejs-complete'
-" Bundle 'maksimr/vim-jsbeautify'
-Bundle 'fatih/vim-go'
+Plugin 'pangloss/vim-javascript'
+Plugin 'myhere/vim-nodejs-complete'
+Plugin 'fatih/vim-go'
 " required for phpcomplete_extended
-Bundle 'Shougo/vimproc'
-Bundle 'm2mdas/phpcomplete-extended'
-Bundle 'm2mdas/phpcomplete-extended-laravel'
-" Bundle 'm2mdas/phpcomplete-extended-symfony'
-" Bundle 'joonty/vdebug'
-Bundle 'drwX/php-doc.vim'
-Bundle 'stephpy/vim-php-cs-fixer'
-Bundle 'honza/dockerfile.vim'
-
-Bundle 'brookhong/DBGPavim'
-
-
-" Bundle 'majutsushi/tagbar'
-" Bundle 'Valloric/YouCompleteMe'
-" Bundle 'zweifisch/pipe2eval'
-" Bundle 'Shougo/unite.vim'
-
+" Plugin 'm2mdas/phpcomplete-extended'
+" Plugin 'm2mdas/phpcomplete-extended-laravel'
+" Plugin 'm2mdas/phpcomplete-extended-symfony'
+Plugin 'joonty/vdebug'
+" required for pdv
+Plugin 'tobyS/vmustache'
+Plugin 'tobyS/pdv'
+Plugin 'stephpy/vim-php-cs-fixer'
+Plugin 'honza/dockerfile.vim'
+call vundle#end()
 " }}}
 
 " General {{{
 filetype plugin indent on "load filetype plugins/indent settings
 syntax on "enable syntax highlight
 set shell=/bin/bash "set bash as default shell
-" set autochdir "always switch to the current file directory
 set backspace=2 "value 2 is the same as =indent,eol,start "make backspace a more flexible
 set clipboard=unnamed
+if has('nvim')
+    set clipboard+=unnamedplus
+endif
 set fileformat=unix
 set noerrorbells
 " set nohidden
@@ -113,7 +107,18 @@ set tags=./tags;/
 " colorscheme wombat256mod
 colorscheme mod-base16-railscasts
 set background=dark
-" set textwidth=
+
+" Don't timeout key sequences
+set notimeout
+" Timeout key codes (don't wait after Esc)
+set ttimeout
+set ttimeoutlen=10
+
+au BufWinLeave ?* mkview
+au BufWinEnter ?* silent! loadview
+
+set scs "smart search (override 'ic' when pattern has upper)
+set complete=.,w,b,t,kspell "set the autocomplete search list
 
 " }}}
 
@@ -150,25 +155,14 @@ aug END
 
 " close scratch window
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-
 " }}}
-
-" Don't timeout key sequences
-set notimeout
-" Timeout key codes (don't wait after Esc)
-set ttimeout
-set ttimeoutlen=10
-
-if !has( "gui_running" )
-    " set term=screen-256color
-    set term=xterm-256color
-endif
 
 " UI {{{
 set guioptions=acr
 
 set laststatus=2 "always show the status bar
 set lazyredraw "do not redraw while running macros
+set ttyfast
 
 set cmdheight=2 "set the commandheight
 set hlsearch "turn if highlight for searched expressions
@@ -185,8 +179,8 @@ set ignorecase "set ignorecase on
 set smartcase
 set ruler "show the cursor position all the time
 
-set scrolljump=5 "lines to scroll when cursor leaves screen
-set scrolloff=3 "minimun lines to keep adove and below cursor
+set scrolljump=1 "lines to scroll when cursor leaves screen
+set scrolloff=0 "minimun lines to keep adove and below cursor
 set showmatch
 set showmode "show the current mode
 
@@ -197,29 +191,86 @@ set showcmd "show partial commands?
 set magic "magic for regular expressions
 set anti enc=utf-8 gfn=Source_Code_Pro:h13,Inconsolata-dz_for_Powerline:h11,Menlo:h11,Monaco:h11
 
-"set guicursor=n-v-c:block-Cursor-blinkon0,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor,r-cr:hor20-Cursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
-
 "show characters
 set list
 set listchars=tab:>\ ,eol:¬,extends:>,precedes:<
 " }}}
 
-" Folding {{{
+" statusline {{{
+hi User1 ctermfg=250 ctermbg=4
+hi User2 ctermfg=250 ctermbg=0
+hi User3 ctermfg=250 ctermbg=237
+hi User4 ctermfg=250 ctermbg=240
+hi User5 ctermfg=250 ctermbg=240
+hi User7 ctermfg=250 ctermbg=240
+hi User8 ctermfg=250 ctermbg=0
+hi User9 ctermfg=250 ctermbg=240
+hi User0 ctermfg=250 ctermbg=240
 
-" Folding based on indentation:
+" function! s:RefreshStatus()
+"   for nr in range(1, winnr('$'))
+"     call setwinvar(nr, '&statusline', '%!Status(' . nr . ')')
+"   endfor
+" endfunction
+"
+" augroup status
+"   autocmd!
+"   autocmd VimEnter,WinEnter,BufWinEnter * call <SID>RefreshStatus()
+" augroup END
+
+set statusline=
+set statusline+=%1*\ %{Mode()}\                            "Mode
+set statusline+=%2*\[%n:%{NumberOfBuffers()}]             "buffernr
+set statusline+=%3*\ %<%F\                                "File+path
+set statusline+=%4*\ %y\ \|\                                  "FileType
+set statusline+=\%{''.(&fenc!=''?&fenc:&enc).''}\ \|\      "Encoding
+set statusline+=\%{&ff}\                              "FileFormat (dos/unix..)
+set statusline+=%5*\ %{CurrentProject()}\%{MyBranch()}\  "Spellanguage & Highlight on?
+set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             "Rownumber/total (%)
+set statusline+=%9*\ col:%03c\                            "Colnr
+set statusline+=%0*\ \ %m%r%w\ %P\ \                      "Modified? Readonly? Top/bot.
+
+function! NumberOfBuffers()
+    return len(filter(range(1, bufnr('$')), 'buflisted(v:val)'))
+endfunction
+function! CurrentProject()
+    if &ft !~? 'vimfiler\|gundo\|notes\|vundle'
+        return ''
+    endif
+    return ''
+endfunction
+function! Mode()
+    redraw
+    let l:mode = mode()
+
+    if     mode ==# "n"  | exec 'hi User1 ctermfg=250 ctermbg=4' | return "N"
+    elseif mode ==# "i"  | exec 'hi User1 ctermfg=250 ctermbg=10' | return "I"
+    elseif mode ==# "c"  | exec 'hi User1 ctermfg=250 ctermbg=12' | return "C"
+    elseif mode ==# "R"  | exec 'hi User1 ctermfg=250 ctermbg=1' | return "R"
+    elseif mode ==# "v"  | exec 'hi User1 ctermfg=250 ctermbg=8' | return "V"
+    elseif mode ==# "V"  | exec 'hi User1 ctermfg=250 ctermbg=8' | return "VL"
+    elseif mode ==# "" | exec 'hi User1 ctermfg=250 ctermbg=8' | return "VB"
+    else                 | return l:mode
+    endif
+endfunc
+" if !has('gui_running')
+"     au InsertEnter  * redraw!
+"     au InsertChange * redraw!
+"     au InsertLeave  * redraw!
+" endif
+" }}}
+
+" Folding {{{
 set foldmethod=manual
 set nofoldenable " don't open folds by default
 " Close higher-level folds on foldenable
 set foldnestmax=1
 set foldlevel=1
-
-au BufWinLeave * silent! mkview
-au BufWinEnter * silent! loadview
 " toggle with space
 vnoremap <Space> za
 nnoremap <Space> za
 
-fu! CustomFoldText() " {{{
+fu! CustomFoldText()
     "get first non-blank line
     let fs = v:foldstart
     while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
@@ -238,27 +289,11 @@ fu! CustomFoldText() " {{{
     let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
     let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
     return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
-endf " }}}
-function! MyFoldText() " {{{
-    let line = getline(v:foldstart)
-
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-    let foldedlinecount = v:foldend - v:foldstart
-
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
-
-    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
-    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
-endfunction " }}}
+endf
 set foldtext=CustomFoldText()
-
 " }}}
 
-" Tabs {{{
+" Tabs / Spaces {{{
 set expandtab "insert space character, when tab key is pressed
 set tabstop=4 "tabs and indenting
 set shiftwidth=4
@@ -273,42 +308,43 @@ set preserveindent "save as much indent structure as possible
 
 " }}}
 
-" NETRW {{{ disabled
-" Toggle Vexplore with Ctrl-E
-function! ToggleVExplorer()
-  if exists("t:expl_buf_num")
-      let expl_win_num = bufwinnr(t:expl_buf_num)
-      if expl_win_num != -1
-          let cur_win_nr = winnr()
-          exec expl_win_num . 'wincmd w'
-          close
-          exec cur_win_nr . 'wincmd w'
-          unlet t:expl_buf_num
-      else
-          unlet t:expl_buf_num
-      endif
-  else
-      exec '1wincmd w'
-      Vexplore
-      let t:expl_buf_num = bufnr("%")
-  endif
-endfunction
-" map <silent> <C-E> :call ToggleVExplorer()<CR>
-
-" Hit enter in the file browser to open the selected
-" file with :vsplit to the right of the browser.
-let g:netrw_browse_split = 3
-let g:netrw_altv = 1
-
-" Default to tree mode
-let g:netrw_liststyle=3
-" }}}
+" TODO remove
+" " NETRW {{{ disabled
+" " Toggle Vexplore with Ctrl-E
+" function! ToggleVExplorer()
+"   if exists("t:expl_buf_num")
+"       let expl_win_num = bufwinnr(t:expl_buf_num)
+"       if expl_win_num != -1
+"           let cur_win_nr = winnr()
+"           exec expl_win_num . 'wincmd w'
+"           close
+"           exec cur_win_nr . 'wincmd w'
+"           unlet t:expl_buf_num
+"       else
+"           unlet t:expl_buf_num
+"       endif
+"   else
+"       exec '1wincmd w'
+"       Vexplore
+"       let t:expl_buf_num = bufnr("%")
+"   endif
+" endfunction
+" " map <silent> <C-E> :call ToggleVExplorer()<CR>
+"
+" " Hit enter in the file browser to open the selected
+" " file with :vsplit to the right of the browser.
+" let g:netrw_browse_split = 3
+" let g:netrw_altv = 1
+"
+" " Default to tree mode
+" let g:netrw_liststyle=3
+" " }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"SYNTASTIC {{{
+" SYNTASTIC {{{
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1 " open error-windows
 let g:syntastic_auto_jump=0 " jump to the first error
@@ -405,6 +441,11 @@ augroup AutoSyntastic
   autocmd!
   autocmd BufWritePost g:syntastic_mode_map['active_filetypes'] call lightline#update()
 augroup END
+
+" augroup status
+"   autocmd!
+"   autocmd VimEnter,WinEnter,BufWinEnter * call lightline#update()
+" augroup END
 " }}}
 
 " vim-notes {{{
@@ -425,83 +466,32 @@ let g:ctrlp_dotfiles = 0 " don't scan dotfiles
 let g:ctrlp_open_new_file = 'u' " ope new file in same window
 let g:ctrlp_open_multiple_files = 'r' " open multiple files in the current window
 let g:ctrlp_jump_to_buffer = 0
-let g:ctrlp_switch_buffer = 'Et'
+let g:ctrlp_switch_buffer = 'et'
+let g:ctrlp_by_filename = 1
+let g:ctrlp_max_files = 0
 
-let egrep_vi_files = '7z|7|avi|bak|bin|bmp|db|docx|doc|exe|flac|flv|gif|ico|img|iso|jar|jpg|log|mkv|mp3|odg|ods|odt|pdf|plt|png|ppt|rar|tgz|wav|wma|wmv|xsl|zip|out|swp|swo'
+" PyMatcher for CtrlP
+if !has('python')
+    echo 'In order to use pymatcher plugin, you need +python compiled vim'
+else
+    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+endif
 
-let ctrlp_filter_greps = "".
-    \ "egrep -iv '\\.(" .
-    \ egrep_vi_files .
-    \ ")$' | " .
-    \ "egrep -v '^(\\./)?(" .
-    \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/" .
-    \ ")' | sort"
+if executable('ag')
+    let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+        \ --ignore .git
+        \ --ignore .svn
+        \ --ignore .hg
+        \ --ignore node_modules
+        \ --ignore .DS_Store
+        \ --ignore "**/*.pyc"
+        \ -g ""'
+else
+    let g:ctrlp_custom_ignore = '\.git$\|\.hg$\|\.svn$'
+    let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others']
+endif
 
-let my_ctrlp_user_command = "" .
-    \ "find %s '(' -type f -or -type d ')' -maxdepth " . g:ctrlp_max_depth . " -not -path '*/\\.*/*' | " .
-    \ ctrlp_filter_greps
-
-let my_ctrlp_git_command = "" .
-    \ "cd %s && git ls-files --exclude-standard -co | " .
-    \ ctrlp_filter_greps
-
-let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
-
-" }}}
-
-" CtrlPBuffer {{{
 nnoremap <C-b> :CtrlPBuffer<CR>
-" }}}
-
-" EasyMotion {{{
-let g:EasyMotion_do_mapping = 0
-
-" Bi-directional find motion
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
-nmap s <Plug>(easymotion-s)
-
-" Turn on case sensitive feature
-let g:EasyMotion_smartcase = 1
-
-"
-" nnoremap <silent> <Leader>f      <Plug>(easymotion-f)
-" onoremap <silent> <Leader>f      <Plug>(easymotion-f)
-" vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
-"
-" nnoremap <silent> <Leader>F      <Plug>(easymotion-F)
-" onoremap <silent> <Leader>F      <Plug>(easymotion-F)
-" vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
-
-" onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
-" onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
-
-" TODO experimentel..
-" Gif config
-" nmap / <Plug>(easymotion-sn)
-" xmap / <Esc><Plug>(easymotion-sn)\v%V
-" omap / <Plug>(easymotion-tn)
-" nnoremap g/ /
-" These `n` & `N` mappings are options. You do not have to map `n` & `N` to EasyMotion.
-" Without these mappings, `n` & `N` works fine. (These mappings just provide
-" different highlight method and have some other features )
-" map  n <Plug>(easymotion-next)
-" map  N <Plug>(easymotion-prev)
-
-" fix colors
-" hi link EasyMotionTarget ErrorMsg
-" hi link EasyMotionShade  Comment
-
-" }}}
-
-" jsbeautify {{{
-" autocmd FileType javascript noremap <buffer>  <c-M> :call JsBeautify()<cr>
-" autocmd FileType html noremap <buffer> <c-M> :call HtmlBeautify()<cr>
-" autocmd FileType css noremap <buffer> <c-M> :call CSSBeautify()<cr>
-" }}}
-
-" ACK {{{
-" nnoremap <bs> :Ack! '\b<c-r><c-w>\b'<cr>
 " }}}
 
 " vim-nodejs-complete {{{
@@ -509,67 +499,30 @@ let g:nodejs_complete_config = {
 \  'js_compl_fn': 'jscomplete#CompleteJS',
 \  'max_node_compl_len': 15
 \}
+
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 " }}}
 
 " vim-lengthmatters {{{
 let g:lengthmatters_start_at_column = 120
 " }}}
-" if performance down
-" let loaded_matchparen = 1
-" http://vimdoc.sourceforge.net/htmldoc/intro.html#keycodes
 
-" TaskList {{{
+" Tabularize: {{{
+vmap <leader>t= :Tabularize /=<CR>
+vmap <leader>t: :Tabularize /:\zs/l0l1<CR>
+" }}}
+
+" TaskList: {{{
 nnoremap <leader>t <Plug>TaskList
 let g:tlWindowPosition = 1
 let g:tlTokenList = ['FIXME', 'TODO', 'XXX']
 " }}}
 
-" SmartInput {{{
-call smartinput#define_rule({
-            \   'at':       '(\%#)',
-            \   'char':     '<Space>',
-            \   'input':    '<Space><Space><Left>',
-            \   })
-
-call smartinput#map_to_trigger('i', '<Space>', '<Space>', '<Space>')
-call smartinput#define_rule({
-            \   'at':       '( \%# )',
-            \   'char':     '<BS>',
-            \   'input':    '<Del><BS>',
-            \   })
-
-call smartinput#define_rule({
-            \   'at':       '{\%#}',
-            \   'char':     '<Space>',
-            \   'input':    '<Space><Space><Left>',
-            \   })
-
-call smartinput#define_rule({
-            \   'at':       '{ \%# }',
-            \   'char':     '<BS>',
-            \   'input':    '<Del><BS>',
-            \   })
-
-call smartinput#define_rule({
-            \   'at':       '\[\%#\]',
-            \   'char':     '<Space>',
-            \   'input':    '<Space><Space><Left>',
-            \   })
-
-call smartinput#define_rule({
-            \   'at':       '\[ \%# \]',
-            \   'char':     '<BS>',
-            \   'input':    '<Del><BS>',
-            \   })
-
-" }}}
-
-" Gundo {{{
+" Gundo: {{{
 let g:gundo_preview_bottom = 1
-
 " }}}
 
-" MatchTagAlways {{{
+" MatchTagAlways: {{{
 let g:mta_filetypes = {
     \ 'html' : 1,
     \ 'xhtml' : 1,
@@ -581,125 +534,138 @@ let g:mta_filetypes = {
     \}
 " }}}
 
-" YouCompleteMe {{{
+" YouCompleteMe: {{{
 " change this map, c-space doesn't work, because control will be send the ESC
 " character. also when c+space are pressed (maybe change this on keyremap4mac)
 " let g:ycm_key_invoke_completion = '<C-Space>'
-" }}}
 
-" neocomplete {{{
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplete#smart_close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
+" TODO check this. from neocomplete
+" maps
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" function! s:my_cr_function()
+  " return neocomplete#smart_close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  " return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+" endfunction
+
 " ToDo: navigte optios with <control>+j/k
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-" let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 " }}}
 
-" VDebug {{{
-" let g:vdebug_keymap = {
-" \    "run" : "<Leader>s",
-" \    "run_to_cursor" : "<Down>",
-" \    "step_over" : "<Up>",
-" \    "step_into" : "<Right>",
-" \    "step_out" : "<Left>",
-" \    "close" : "q",
-" \    "detach" : "x",
-" \    "set_breakpoint" : "<Leader>d",
-" \    "eval_visual" : "<Leader>e"
-" \}
-"
-" let g:vdebug_options = {
-" \    "break_on_open" : 0,
-" \    "watch_window_style": 'compact',
-" \    "watch_window_height": 40,
-" \    "status_window_height": 5
-" \}
+" Ultisnips: {{{
+" let g:UltiSnipsExpandTrigger="<c-j>"
+" let g:UltiSnipsJumpForwardTrigger="<c-j>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:snips_author="Juan Pablo Stumpf <juanolon@gmail.com>"
+let g:UltiSnipsEditSplit="horizontal"
+let g:UltiSnipsExpandTrigger="<C-l>"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-k>"
+let g:UltiSnipsSnippetDirectories=["Ultisnips"]
+
+let g:vundle_lazy_load=1
+let g:ycm_show_diagnostics_ui=0
+
+func! g:JInYCM()
+    if pumvisible()
+        return "\<C-n>"
+    else
+        return "\<c-j>"
+endfunction
+
+func! g:KInYCM()
+    if pumvisible()
+        return "\<C-p>"
+    else
+        return "\<c-k>"
+endfunction
+inoremap <c-j> <c-r>=g:JInYCM()<cr>
+au BufEnter,BufRead * exec "inoremap <silent> " . g:UltiSnipsJumpBackwordTrigger . " <C-R>=g:KInYCM()<cr>"
+let g:UltiSnipsJumpBackwordTrigger = "<c-k>"
 " }}}
 
-" vim-debug {{{
-" disable default mappings
-" let g:vim_debug_disable_mappings = 1
-" autocmd FileType php map <buffer> <Up> :Dbg over<CR>
-" autocmd FileType php map <buffer> <Right> :Dbg into<CR>
-" autocmd FileType php map <buffer> <Left> :Dbg out<CR>
-" autocmd FileType php map <buffer> <Down> :Dbg here<CR>
-" autocmd FileType php map <buffer> <Leader>d :Dbg break<CR>
-" autocmd FileType php map <buffer> <F10> :Dbg watch<CR>
-" autocmd FileType php map <buffer> <F11> :Dbg down<CR>
-" autocmd FileType php map <buffer> <F12> :Dbg up<CR>
-" }}}
-"
-" DBGPavim {{{
-let g:dbgPavimPort = 9000
-let g:dbgPavimBreakAtEntry = 0
+" VDebug: {{{
+let g:vdebug_keymap = {
+\    "run" : "<Leader>s",
+\    "run_to_cursor" : "<Down>",
+\    "step_over" : "<Up>",
+\    "step_into" : "<Right>",
+\    "step_out" : "<Left>",
+\    "close" : "q",
+\    "detach" : "x",
+\    "set_breakpoint" : "<Leader>d",
+\    "eval_visual" : "<Leader>e"
+\}
 
-" <F5>      => start debugger backend
-" <F6>      => stop debugger backend
-" <F8>      => toggle dbgPavimBreakAtEntry, when g:dbgPavimBreakAtEntry=0, debugger backend breaks only at breakpoints.
-" <F10>     => toggle breakpoint at current line
-" <F1>      => toggle help window
-" <F2>      => step into
-" <F3>      => step over
-" <F4>      => step out
-" <F5>      => start debugging / run
-" <F6>      => stop debugging
-" <F7>      => evalute expression and display result. cursor is automatically move to watch window. type line and just press `Enter`.
-" <F9>      => toggle layout
-" <F11>     => shows all variables
-" <F12>     => shows variable on current cursor
-let g:dbgPavimKeyQuit = '<Leader>q' " <F6>
-let g:dbgPavimKeyRun = '<Leader>s' " <F5>
-let g:dbgPavimKeyStepOver = '<Up>' " <F3>
-let g:dbgPavimKeyStepInto = '<Right>' " <F2>
-let g:dbgPavimKeyStepOut = '<Left>' " <F4>
-let g:dbgPavimKeyPropertyGet = '<Leader>s' " <F12> - show variable under the cursor
-let g:dbgPavimKeyContextGet = '<Leader>a' " show all variables
-let g:dbgPavimKeyToggleBp = '<Leader>d'
-let g:dbgPavimKeyToggleBae = '<nop>'
-let g:dbgPavimKeyRelayout = '<Leader><Space>'
+let g:vdebug_options = {
+\    "break_on_open" : 0,
+\    "watch_window_style": 'compact',
+\    "watch_window_height": 40,
+\    "status_window_height": 5
+\}
 " }}}
 
-" GoldenView {{{
+" GoldenView: {{{
 let g:goldenview__enable_default_mapping = 0
 nmap <silent> <leader><C-l> <Plug>GoldenViewSplit
 " }}}
 
-" phpDoc {{{
-" TODO working?
-let g:pdv_cfg_Type = "mixed"
-let g:pdv_cfg_Package = "Web"
-let g:pdv_cfg_Version = "//autogen//"
-let g:pdv_cfg_Author = "Juan Pablo S."
-let g:pdv_cfg_Copyright = "Copyright (c) 2014 All rights reserved."
-let g:pdv_cfg_License = "PHP Version 5.4"
+" Pdv: {{{
+let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
+nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
 " }}}
 
 " php-complete {{{
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType php call s:checkPHPSettings()
-function! s:checkPHPSettings()
-    if phpcomplete_extended#laravel#is_valid_project()
-        setlocal omnifunc=phpcomplete_extended#CompletePHP
-        let g:phpcomplete_index_composer_command = 'composer'
-    else
-        call phpcomplete_extended#disable()
-    endif
-endfunction
+" autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+" autocmd FileType php call s:checkPHPSettings()
+" function! s:checkPHPSettings()
+"     if phpcomplete_extended#laravel#is_valid_project()
+"         setlocal omnifunc=phpcomplete_extended#CompletePHP
+"         let g:phpcomplete_index_composer_command = 'composer'
+"     else
+"         call phpcomplete_extended#disable()
+"     endif
+" endfunction
 " }}}
 
+" vim-php-cs-fixer: {{{
+" let g:php_cs_fixer_path = "~/php-cs-fixer.phar" " define the path to the php-cs-fixer.phar
+let g:php_cs_fixer_level = "psr2"                  " which level ?
+let g:php_cs_fixer_config = "sf23"             " configuration
+let g:php_cs_fixer_php_path = "php"               " Path to PHP
+" If you want to define specific fixers:
+let g:php_cs_fixer_fixers_list = "parenthesis"
+let g:php_cs_fixer_enable_default_mapping = 1     " Enable the mapping by default (<leader>pcd)
+let g:php_cs_fixer_dry_run = 0                    " Call command with dry-run option
+let g:php_cs_fixer_verbose = 0                    " Return the output of command if 1, else an inline information.
+nnoremap <silent><leader>f :call PhpCsFixerFixFile()<CR>
+" }}}
+
+" fatih/vim-go {{{
+" quick fix for golang
+let $PATH .= ':/Users/juanolon/gocode/bin:/usr/local/opt/go/libexec/bin'
+" let g:go_bin_path="/Users/juanolon/gocode/bin"
+" let g:go_bin_path="/usr/local/opt/go/libexec/bin"
+let g:go_fmt_command = "goimports"
+au FileType go nmap <Leader>s <Plug>(go-implements)
+au FileType go nmap <Leader>i <Plug>(go-info)
+au FileType go nmap <Leader>gd <Plug>(go-doc)
+au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+
+au FileType go nmap <leader>r <Plug>(go-run)
+au FileType go nmap <leader>b <Plug>(go-build)
+au FileType go nmap <leader>t <Plug>(go-test)
+au FileType go nmap <leader>c <Plug>(go-coverage)
+
+au FileType go nmap <Leader>ds <Plug>(go-def-split)
+au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+"}}}
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Maps
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maps {{{
 nnoremap gp `[v`]
 
@@ -711,10 +677,8 @@ nnoremap <F5> :GundoToggle<CR>
 nnoremap <silent> <F6> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<Bar>:retab<CR>
 " TODO: when i search for a new entry, than always activate hlseach
 nnoremap <silent> <F7> :set hlsearch!<CR>
-" phpDoc
-" nnoremap <buffer> <C-i> :set paste<CR>:call PhpDoc()<CR>:set nopaste<CR><F6>
 " TagBar
-" nmap <F8> :TagbarToggle<CR>
+nmap <F8> :TagbarToggle<CR>
 " toggle syntastic mode
 nnoremap <F10> :SyntasticToggleMode<CR>
 " toggle between displaying whitespace characters or not
@@ -753,7 +717,8 @@ vnoremap <C-h> ^
 vnoremap <C-l> $
 
 " split lines under the cursor (opposite of J)
-map K i<CR><Esc>g;
+" noremap <c-m> K
+noremap K i<CR><Esc>g;
 
 " Delete a character with the black hole register.
 nnoremap X  "_X
@@ -837,19 +802,76 @@ hi def InterestingWord3 guifg=#000000 ctermfg=16 guibg=#8cffba ctermbg=121
 hi def InterestingWord4 guifg=#000000 ctermfg=16 guibg=#b88853 ctermbg=137
 hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
 hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
-
 " }}}
 
-" for debbug
+" Zoom / Restore window {{{
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+        exec t:zoom_winrestcmd
+        let t:zoomed = 0
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+        let t:zoomed = 1
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+" nnoremap <silent> <M-z> :ZoomToggle<CR>
+nnoremap <silent> <C-w>z :ZoomToggle<CR>
+" }}}
+
+" show syntax item name {{{
 function! SyntaxItem()
   return synIDattr(synID(line("."),col("."),1),"name")
 endfunction
 
 " show syntax block
 " call Pl#Theme#InsertSegment(SyntaxItem(), 'after', 'filetype')
+" }}}
 
-set scs "smart search (override 'ic' when pattern has upper)
-set complete=.,w,b,t,kspell "set the autocomplete search list
+" show supported colors {{{
+" Color test: Save this file, then enter ':so %'
+" Then enter one of following commands:
+"   :VimColorTest    "(for console/terminal Vim)
+"   :GvimColorTest   "(for GUI gvim)
+function! VimColorTest(outfile, fgend, bgend)
+  let result = []
+  for fg in range(a:fgend)
+    for bg in range(a:bgend)
+      let kw = printf('%-7s', printf('c_%d_%d', fg, bg))
+      let h = printf('hi %s ctermfg=%d ctermbg=%d', kw, fg, bg)
+      let s = printf('syn keyword %s %s', kw, kw)
+      call add(result, printf('%-32s | %s', h, s))
+    endfor
+  endfor
+  call writefile(result, a:outfile)
+  execute 'edit '.a:outfile
+  source %
+endfunction
+" Increase numbers in next line to see more colors.
+command! VimColorTest call VimColorTest('vim-color-test.tmp', 12, 16)
+
+function! GvimColorTest(outfile)
+  let result = []
+  for red in range(0, 255, 16)
+    for green in range(0, 255, 16)
+      for blue in range(0, 255, 16)
+        let kw = printf('%-13s', printf('c_%d_%d_%d', red, green, blue))
+        let fg = printf('#%02x%02x%02x', red, green, blue)
+        let bg = '#fafafa'
+        let h = printf('hi %s guifg=%s guibg=%s', kw, fg, bg)
+        let s = printf('syn keyword %s %s', kw, kw)
+        call add(result, printf('%s | %s', h, s))
+      endfor
+    endfor
+  endfor
+  call writefile(result, a:outfile)
+  execute 'edit '.a:outfile
+  source %
+endfunction
+command! GvimColorTest call GvimColorTest('gvim-color-test.tmp')
+" }}}
 
 " Next and Last {{{
 " thanks steve losh
@@ -907,12 +929,8 @@ endfunction
 " }}}
 
 " Number Motion {{{
-
 " Motion for numbers.  Great for CSS.  Lets you do things like this:
-"
 " margin-top: 200px; -> daN -> margin-top: px;
-"              ^                          ^
-" TODO: Handle floats.
 
 onoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
 xnoremap N :<c-u>call <SID>NumberTextObject(0)<cr>
@@ -936,14 +954,14 @@ function! s:NumberTextObject(whole)
         endwhile
     endif
 endfunction
-
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Execute {{{
+":[range]Execute    Execute text lines as ex commands.
+command! -bar -range Execute silent <line1>,<line2>yank z | let @z = substitute(@z, '\n\s*\\', '', 'g') | @z
+" }}}
 
-" show rebundant spaces
+" Show rebundant spaces {{{
 highlight RedundantSpaces ctermbg=grey guibg=grey
 au Syntax * syn match RedundantSpaces /\s\+$\| \+\ze\t/
 highlight BadWhitespace ctermbg=red guibg=red
@@ -968,8 +986,11 @@ augroup WhitespaceMatch
     " Clear match when leaving buffer to avoid memory leaks
     autocmd BufWinLeave * call clearmatches()
 augroup END
+" }}}
 
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Make sure Vim returns to the same line when you reopen a file.
 " Thanks, Amit
 augroup line_return
@@ -980,22 +1001,10 @@ augroup line_return
         \ endif
 augroup END
 
-" Set the working directory to the project's root, or to the parent directory
-" of the current file if a root can't be found.
-func! s:etwd()
-    let cph = expand('%:p:h', 1)
-    if match(cph, '\v^<.+>://') >= 0 | retu | en
-    for mkr in ['.git/', '.hg/', '.vimprojects']
-        let wd = call('find'.(mkr =~ '/$' ? 'dir' : 'file'), [mkr, cph.';'])
-        if wd != '' | let &acd = 0 | brea | en
-    endfo
-    exe 'lc!' fnameescape(wd == '' ? cph : substitute(wd, mkr.'$', '.', ''))
-endfunc
-
-au BufEnter * if &ft !=# 'notes' | cal s:etwd() | endif " but don't change working directory, if opening notes
-" au BufEnter * cal s:etwd()
-
-" filetypes {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetypes specific settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" settings {{{
 augroup ft_c
     au!
     au FileType php setlocal foldmethod=manual
@@ -1014,15 +1023,13 @@ augroup ft_markdown
     autocmd FileType markdown setlocal spell
     setlocal spell spelllang=en_us
 augroup END
-" }}}
 
 "activate omnifunc: strg-x o
 autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-" autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 " autocmd FileType c set omnifunc=ccomplete#Complete
 "
 au BufRead,BufNewFile *.tpl  set filetype=ezp
@@ -1031,3 +1038,4 @@ au BufRead,BufNewFile *.tpl  set filetype=ezp
 au BufRead,BufNewFile *.ini.append.php set filetype=ezpini
 au BufRead,BufNewFile *.ini.append set filetype=ezpini
 au BufRead,BufNewFile *.ini set filetype=ezpini
+" }}}

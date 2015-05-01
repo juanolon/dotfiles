@@ -8,6 +8,14 @@ KEYBOARD_DIR=$HOME'/Library/Keyboard Layouts'
 KEYREMAP_DIR=$HOME'/Library/Application Support/KeyRemap4MacBook'
 HERE=`pwd`
 
+# TODO list all require binaries
+# libcaca
+# ranger
+# run ranger --copy-config=scope
+# irssi
+# vim
+# tmux
+
 # TODO: check wich OS run
 # target folder : file (relative to this script : target file name
 files=( "HOME:gitconfig:.gitconfig"
@@ -25,6 +33,8 @@ files=( "HOME:gitconfig:.gitconfig"
         "HOME:tmux/tmuxcolors.conf:.tmuxcolors.conf"
         "HOME:ctags:.ctags"
         "HOME:slate:.slate"
+        "HOME:irssi:.irssi"
+        "HOME:ranger:.config/ranger"
         "HOME:tmux-vim.conf:.tmux-vim.conf"
         "HOME:tigrc:.tigrc"
         "HOME:bin/:.bin" )

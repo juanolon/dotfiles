@@ -1,12 +1,13 @@
 # Skip all this for non-interactive shells
 [[ -z "$PS1" ]] && return
 
-# add android tools and mysqlbin to path
-# from php53 caveats, add /usr/local/opt/php53/bin ( PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH" )
-export PATH=/usr/local/opt/php54/bin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/.android/tools:$HOME/.rvm/bin:/usr/local/share/python:$HOME/.bin:$PATH
-
 export NODE_PATH="/usr/local/share/npm/lib/node_modules"
 export GOPATH="$HOME/gocode"
+export GOROOT="/usr/local/opt/go/libexec"
+
+# add android tools and mysqlbin to path
+# from php53 caveats, add /usr/local/opt/php53/bin ( PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH" )
+export PATH=/usr/local/opt/php54/bin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/.android/tools:$HOME/.rvm/bin:/usr/local/share/python:$HOME/.bin:$GOPATH/bin:$GOROOT/bin:$PATH
 
 # don't save duplicates in history
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
@@ -94,7 +95,7 @@ export LANGUAGE="en_US"
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-export PATH=/Users/juanolon/.bin/Sencha/Cmd/4.0.1.45:$PATH
+# export PATH=/Users/juanolon/.bin/Sencha/Cmd/4.0.1.45:$PATH
 
 export SENCHA_CMD_3_0_0="/Users/juanolon/.bin/Sencha/Cmd/4.0.1.45"
 

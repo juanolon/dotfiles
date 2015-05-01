@@ -1,3 +1,6 @@
+# OPTIONS {{{
+setopt ignoreeof # don't logout with ctrl+d
+# }}}
 # COLORS {{{
 ## set colors for GNU ls ; set this to right file
 # TODO use the right theme
@@ -13,44 +16,11 @@ export VISUAL='vim'
 # @TODO don't work
 # zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 #
-# PATH {{{
-
-export GOPATH="$HOME/gocode"
-
-php55_path=`/usr/local/bin/brew --prefix josegonzalez/php/php55`
-path=''
-path=($path /usr/local/bin $HOME/.bin)
-path=($path /bin /usr/bin /usr/sbin /sbin)
-path=($path $HOME/.rvm/bin)
-path=($path $HOME/.android/tools)
-path=($path /usr/local/share/npm/bin/)
-path=($path /usr/local/opt/coreutils/libexec/gnubin)
-path=($path $php55_path/bin)
-path=($path /usr/local/opt/go/libexec/bin)
-path=($path $HOME/.composer/vendor/bin)
-path=($path $GOPATH/bin)
-path=($path $HOME/.depot_tools)
-export PATH="$path":$PATH
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
-export JAVA_HOME=`/usr/libexec/java_home`
-
-cdpath=(~ ..) ## on cd command offer dirs in home and one dir up.
-
-NODE_PATH="/usr/local/lib/node_modules" # from bash..
-
-manpath=($manpath /usr/share/man) ## EDIT ##
-manpath=($manpath /usr/local/opt/coreutils/libexec/gnuman) ## EDIT ##
-
-fpath=(/usr/local/share/zsh-completions $fpath)
-
-## remove duplicate entries from path,cdpath,manpath & fpath
-typeset -gU path cdpath manpath fpath #TODO
-# }}}
 
 # ALIASES {{{
 # alias c='clear'
 alias h='history'
-alias vim='reattach-to-user-namespace /usr/local/Cellar/vim/HEAD/bin/vim'
+# alias vim='/usr/local/Cellar/vim/HEAD/bin/vim'
 # alias v='f -t -e vim -b viminfo'
 alias ag='ag --color-line-number=91 --color-match=31 --color-path="34;103" -S'
 alias agg='ag -g'
@@ -62,6 +32,7 @@ alias man='nocorrect man'
 alias find='noglob find'
 alias grep='grep --colour'
 alias less='less -R'
+alias ran='ranger-cd'
 # not necessary with prezto :prezto:module:gnu-utility
 if [[ "$VENDOR" == "apple" ]]; then
     alias ls='gls -G --color=auto'
@@ -80,8 +51,7 @@ alias ....='cd ../../..'
 
 alias sshv='bcvi --wrap-ssh -- '
 if [[ -n $TMUX ]]; then
-    alias nvim='vim'
-    v() { VIM_BIN='reattach-to-user-namespace vim' tvim "$@"; }
+    v() { VIM_BIN='/usr/local/bin/nvim' tvim "$@"; }
     alias pbcopy='reattach-to-user-namespace pbcopy'
     alias pbpaste='reattach-to-user-namespace pbpaste'
 fi
@@ -135,6 +105,20 @@ alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
 
 # }}}
 
+# FUNCTIONS {{{
+# Taken from ranger manual
+
+function ranger-cd {
+  tempfile='/tmp/chosendir'
+  ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+  test -f "$tempfile" &&
+  if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
+    cd -- "$(cat "$tempfile")"
+  fi
+  rm -f -- "$tempfile"
+}
+# }}}
+
 # CLI EDITING {{{
 bindkey "^j" history-beginning-search-forward ## down arrow for fwd-history-search
 bindkey "^k" history-beginning-search-backward ## up arrow for back-history-search
@@ -153,3 +137,17 @@ bindkey '^0' beginning-of-line
 # DOCKER {{{
 $(boot2docker shellinit)
 # }}}
+
+# gpg-agent {{{
+# http://sudoers.org/2013/11/05/gpg-agent.html
+GPG_AGENT=$(which gpg-agent)
+GPG_TTY=`tty`
+export GPG_TTY
+
+if [ -f ${GPG_AGENT} ]; then
+    source ~/.gpgenv
+fi
+# }}}
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
